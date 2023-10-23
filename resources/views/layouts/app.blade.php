@@ -72,10 +72,12 @@
             <!-- Content wrapper -->
             <div class="content-wrapper">
                 <!-- Content -->
+                <div class="container-xxl flex-grow-1 container-p-y">
 
-                @yield('content')
+                    @yield('content')
 
-                <!-- / Content -->
+                    <!-- / Content -->
+                </div>
 
                 <!-- Footer -->
                 <footer class="content-footer footer bg-footer-theme">
@@ -128,8 +130,12 @@
 @stack('scripts')
 <script>
     $(document).ready(function () {
-        $(".alert").fadeOut(10000);
+        setTimeout(function () {
+            $(".bs-toast").fadeOut();
+        }, 4000);
+
     });
+
 </script>
 </body>
 </html>

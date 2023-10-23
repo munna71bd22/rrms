@@ -5,33 +5,41 @@
     <link rel="stylesheet" href="{{asset('assets/css/jquery.dataTables.min.css')}}">
     <link rel="stylesheet" href="{{ asset('assets/css/custom-datatable.css') }}"/>
 
-    <div class="container-xxl flex-grow-1 container-p-y">
-        <!-- Bootstrap Table with Header - Light -->
-        <div class="card">
+    <div class="row">
+        <div class="col-{{12-count($tools)}}"></div>
+        <div style="margin-bottom: 5px;" class=" col-{{count($tools)}} btn-group" role="group"
+             aria-label="First group">
+            @foreach($tools as $tool)
 
-            <div class="row">
-                <div class="col">
-                    <h5 class="card-header">{{$title}}</h5>
-                </div>
-                <div class="col">
+                <a href="{{$tool['url']}}" text="{{$tool['name']}}"
+                   type="button"
+                   class="{{$tool['class']}}">
+                    <i class="{{$tool['icon']}}"></i>
+                </a>
 
-                </div>
+            @endforeach
+        </div>
+    </div>
+
+    <!-- Bootstrap Table with Header - Light -->
+    <div class="card">
+
+        <div class="row">
+            <div class="col">
+                <p></p>
             </div>
+        </div>
 
-            <div class="container table-responsive text-nowrap">
-                <table class="table table-borderless table-strip" id="dataTable">
-                    <thead>
-                    <tr>
-                        @foreach($columns as $col)
-                            <th>{{$col}}</th>
-                        @endforeach
-                    </tr>
-                    </thead>
-                    <tbody id="tdata" class="table-border-bottom-0">
-
-                    </tbody>
-                </table>
-            </div>
+        <div class="container table-responsive text-nowrap">
+            <table class="table table-borderless table-strip" id="dataTable">
+                <thead>
+                <tr>
+                    @foreach($columns as $col)
+                        <th>{{$col}}</th>
+                    @endforeach
+                </tr>
+                </thead>
+            </table>
         </div>
     </div>
     <!-- Bootstrap Table with Header - Light -->

@@ -11,21 +11,7 @@
 
         <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
 
-            <!-- Alert -->
-            @if (session('success'))
-
-                <div style="margin-bottom:unset;width:100%;" class="alert alert-success alert-dismissible" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @elseif (session('error'))
-                <div style="margin-bottom:unset;width:100%;" class="alert alert-danger alert-dismissible" role="alert">
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-            <!-- /Alert -->
-
+            <h5 class="card-header">{{$title ?? ''}}</h5>
 
             <ul class="navbar-nav flex-row align-items-center ms-auto">
 
@@ -33,7 +19,8 @@
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
                     <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                         <div class="avatar avatar-online">
-                            <img src="../assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle"/>
+                            <img src="{{ Auth::user()->avatar ?? asset('assets/img/avatars/1.png') }}"" alt
+                            class="w-px-40 h-auto rounded-circle"/>
                         </div>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
@@ -44,7 +31,8 @@
                                 <div class="d-flex">
                                     <div class="flex-shrink-0 me-3">
                                         <div class="avatar avatar-online">
-                                            <img src="../assets/img/avatars/1.png" alt
+                                            <img src="{{ Auth::user()->avatar ?? asset('assets/img/avatars/1.png') }}"
+                                                 alt
                                                  class="w-px-40 h-auto rounded-circle"/>
                                         </div>
                                     </div>
@@ -90,3 +78,42 @@
         </div>
     </nav>
 @endif
+
+<!-- Alert -->
+@if (session('success') || session('error') || session('message'))
+    @php
+        $alertType = session('success') ? 'primary' : (session('error') ? 'danger' : 'info');
+    @endphp
+    <div class="bs-toast toast toast-placement-ex m-2 bg-{{$alertType}} bottom-0 start-0 fade show" role="alert"
+         aria-live="assertive" aria-atomic="true" data-delay="2000">
+        <div class="toast-header">
+            <i class="bx bx-bell me-2"></i>
+            <div class="me-auto fw-semibold">Alert</div>
+            <small>{{ now()->diffForHumans()}}</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            {{ session('success') ??  session('error') ?? session('message')}}
+        </div>
+    </div>
+@endif
+
+@if ($errors->any())
+    <div class="bs-toast toast toast-placement-ex m-2 bg-danger bottom-0 start-0 fade show" role="alert"
+         aria-live="assertive" aria-atomic="true" data-delay="2000">
+        <div class="toast-header">
+            <i class="bx bx-bell me-2"></i>
+            <div class="me-auto fw-semibold">Alert</div>
+            <small>{{ now()->diffForHumans()}}</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
+@endif
+<!-- /Alert -->
