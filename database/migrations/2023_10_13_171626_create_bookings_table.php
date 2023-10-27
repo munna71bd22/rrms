@@ -19,8 +19,8 @@ return new class extends Migration
             $table->timestamp('booking_end_time')->nullable();
             $table->tinyInteger('guest_qty');
             $table->string('status',10)->default('pending')->comment('pending,approved,cancel');
-            $table->unsignedInteger('comfirmed_by')->nullable();
-            $table->timestamp('comfirmed_date')->nullable();
+            $table->unsignedInteger('confirmed_by')->nullable();
+            $table->timestamp('confirmed_date')->nullable();
             $table->tinyText('remarks')->nullable();
             $table->timestamps();
         });

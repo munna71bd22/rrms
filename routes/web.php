@@ -34,7 +34,7 @@ Route::get('/register', function () {
 Route::group(['prefix' => 'home', 'middleware' => 'auth'], function () {
 
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-    Route::resource('/seat-builder', App\Http\Controllers\TableController::class);
+    Route::resource('/seat-builder', App\Http\Controllers\SeatController::class);
     Route::resource('/menu-builder', App\Http\Controllers\MenuController::class);
     Route::resource('/customers', App\Http\Controllers\CustomerController::class);
     Route::resource('/bookings', App\Http\Controllers\BookingController::class);

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title',100);
             $table->decimal('price_before');
             $table->decimal('price');
+            $table->tinyText('photo');
             $table->timestamps();
         });
     }

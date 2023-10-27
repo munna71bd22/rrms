@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Floor extends Model
 {
     use HasFactory;
+    protected $fillable = ['title'];
 }

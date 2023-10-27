@@ -71,7 +71,7 @@
 
         <ul class="menu-inner py-1">
             <!-- Dashboard -->
-            <li class="menu-item active">
+            <li class="menu-item {{ (request()->is('home')) ? 'active' : '' }}">
                 <a href="{{route('home')}}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-home-circle"></i>
                     <div data-i18n="Analytics">Dashboard</div>
@@ -79,29 +79,24 @@
             </li>
 
             <!-- Layouts -->
-            <li class="menu-item">
-                <a href="{{route('seat-builder.index')}}" class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-layout"></i>
-                    <div data-i18n="Layouts">Seats Builder</div>
+            <li class="menu-item {{ (request()->is('home/menu-builder')) ? 'active' : '' }}">
+                <a href="{{route('menu-builder.index')}}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-food-menu"></i>
+                    <div data-i18n="Layouts">Menu Builder</div>
                 </a>
             </li>
 
 
-            <li class="menu-item">
+            <li class="menu-item {{ (request()->is('home/seat-builder')) ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
-                    <i class="menu-icon tf-icons bx bx-food-menu"></i>
-                    <div data-i18n="Layouts">Menu Builder</div>
+                    <i class="menu-icon tf-icons bx bx-layout"></i>
+                    <div data-i18n="Layouts">Seat Builder</div>
                 </a>
 
                 <ul class="menu-sub">
-                    <li class="menu-item">
-                        <a href="layouts-without-menu.html" class="menu-link">
-                            <div data-i18n="Without menu">Menu Items</div>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="layouts-without-navbar.html" class="menu-link">
-                            <div data-i18n="Without navbar">Menus</div>
+                    <li class="menu-item {{ (request()->is('home/seat-builder')) ? 'active' : '' }}">
+                        <a href="{{route('seat-builder.index')}}" class="menu-link">
+                            <div data-i18n="Without menu">build</div>
                         </a>
                     </li>
 
@@ -112,7 +107,8 @@
             <li class="menu-header small text-uppercase">
                 <span class="menu-header-text">Bookings</span>
             </li>
-            <li class="menu-item">
+
+            <li class="menu-item {{ (request()->is('home/customers')) ? 'active' : '' }}">
                 <a href="{{route('customers.index')}}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-user-pin"></i>
                     <div data-i18n="Account Settings">Customers</div>
@@ -120,8 +116,8 @@
 
             </li>
 
-            <li class="menu-item">
-                <a href="javascript:void(0);" class="menu-link">
+            <li class="menu-item {{ (request()->is('home/bookings')) ? 'active' : '' }}">
+                <a href="{{route('bookings.index')}}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-restaurant"></i>
                     <div data-i18n="Account Settings">Bookings</div>
                 </a>
@@ -130,21 +126,21 @@
 
 
             <!-- Components -->
+            <!--
             <li class="menu-header small text-uppercase"><span class="menu-header-text">Settings</span></li>
-            <!-- Cards -->
             <li class="menu-item">
                 <a href="cards-basic.html" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-cog"></i>
                     <div data-i18n="Basic">Configuration</div>
                 </a>
             </li>
-
             <li class="menu-item">
                 <a href="ui-accordion.html" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-file"></i>
                     <div data-i18n="Accordion">Website Pages</div>
                 </a>
             </li>
+            -->
 
         </ul>
     @endif

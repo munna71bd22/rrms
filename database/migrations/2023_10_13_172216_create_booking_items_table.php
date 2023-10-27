@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->date('booking_date');
             $table->unsignedInteger('booking_id');
-            $table->unsignedInteger('tbale_id');
-            $table->unsignedInteger('menu_id');
+            $table->unsignedInteger('table_id');
+            $table->json('menus')->nullable();
             $table->tinyInteger('guest_qty')->default(1);
             $table->unsignedInteger('user_id');
             $table->string('status',10)->default('pending')->comment('pending,approved,cancel');

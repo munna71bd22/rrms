@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Auth;
@@ -16,24 +17,34 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $items = User::select(['id', 'name', 'email']);
+            $items = User::select(['id', 'name', 'email','mobile','avatar'])->orderBy('created_at', 'DESC');
             return DataTables::eloquent($items)
                 ->addColumn('avatar', function ($item) {
-                    $path = "photo/" . $item->id . ".jpg";
+                    $path = "customer/" . $item->id . ".png";
                     $imgSrc = file_exists($path) ? asset($path) : asset('assets/img/avatars/1.png');
                     return '<img width="30" height="30" src=' . $imgSrc . '>';
                 })
                 ->addColumn('actions', function ($item) {
-                    return "<div class='btn-group' role='group' aria-label='First group'>
-                              <a href='" . route('customers.edit', $item->id) . "' type='button' class='btn btn-outline-info'>
-                                <i class='tf-icons bx bx-edit'></i>
+                    return '<div class="btn-group" role="group" aria-label="First group">
+                              <a title="Edit" href="' . route('customers.edit', $item->id) . '" type="button" class="btn btn-outline-info">
+                                <i class="tf-icons bx bx-edit"></i>
                               </a>
 
-                               <a href='" . route('customers.destroy', $item->id) . "' type='button' class='btn btn-outline-danger'>
-                                <i class='tf-icons bx bx-trash'></i>
+                               <a title="Show" href="' . route('customers.show', $item->id) . '" type="button" class="btn btn-outline-info">
+                                <i class="tf-icons bx bxs-notepad"></i>
                               </a>
 
-                            </div>";
+                               <a
+                               title="Delete"
+                               name="' . route('customers.destroy', $item->id) . '"
+                               onclick="confirmDelete(this.name)"
+                               type="button"
+                               class="btn btn-outline-danger">
+                                <i class="tf-icons bx bx-trash"></i>
+                              </a>
+
+
+                            </div>';
                 })
                 ->rawColumns(['avatar', 'actions'])
                 ->toJson();
@@ -42,8 +53,41 @@ class CustomerController extends Controller
         // If it's not an AJAX request, render the 'customers.list' view.
         return view('components.list', [
             'title' => 'Customer List',
+            'pageID' => 'customer101',
             'data_route' => 'customers.index',
-            'columns' => ['Name', 'Email', 'Avatar', 'Actions'],
+            'columns' => ['Name', 'Email', 'Mobile', 'Avatar', 'Actions'],
+            'columns_for_datatable' => [
+                [
+                    "data" => "name",
+                    "name" => "name",
+                    "orderable" => "true",
+                    "sortable" => "true",
+                ],
+                [
+                    "data" => "email",
+                    "name" => "email",
+                    "orderable" => "true",
+                    "sortable" => "true",
+                ],
+                [
+                    "data" => "mobile",
+                    "name" => "mobile",
+                    "orderable" => "true",
+                    "sortable" => "true",
+                ],
+                [
+                    "data" => "avatar",
+                    "name" => "avatar",
+                    "orderable" => "false",
+                    "sortable" => "false",
+                ],
+                [
+                    "data" => "actions",
+                    "name" => "actions",
+                    "orderable" => "false",
+                    "sortable" => "false",
+                ],
+            ],
             'tools' => [
                 [
                     'name' => 'Create',
@@ -107,7 +151,7 @@ class CustomerController extends Controller
                 [
                     'label' => 'Avatar',
                     'placeholder' => 'Upload Customer Avatar',
-                    'icon' => 'bx bx-avatar',
+                    'icon' => 'bx bx-cloud-upload',
                     'width' => '4',
                     'name' => 'avatar',
                     'type' => 'file',
@@ -135,7 +179,7 @@ class CustomerController extends Controller
         try {
             $validated = $request->validate([
                 'name' => 'required|max:255',
-                'mobile' => 'required|min:11',
+                'mobile' => 'required|unique:users|min:11',
                 'email' => 'required|email|unique:users|max:255',
                 'password' => 'required|min:8',
                 'address' => 'nullable|max:2000',
@@ -157,9 +201,19 @@ class CustomerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $obj)
+    public function show($id)
     {
-        return view('components.show', compact('obj'));
+        $obj = User::select(
+            [
+                'name',
+                'email',
+                'mobile',
+                'address',
+                'avatar',
+                'created_at'
+            ]
+        )->find($id);
+        return view('components.show', ['title' => 'Customer Details', 'obj' => $obj]);
     }
 
     /**
@@ -170,7 +224,7 @@ class CustomerController extends Controller
         $obj = User::find($id);
         return view('components.edit', [
                 'obj' => $obj,
-                'title' => 'Create Customer',
+                'title' => 'Edit Customer',
                 'method' => 'POST',
                 'route' => 'customers.update',
                 'fields' => [
@@ -243,8 +297,8 @@ class CustomerController extends Controller
         try {
             $validated = $request->validate([
                 'name' => 'required|max:255',
-                'mobile' => 'required|min:11',
-                'email' => 'required|email|max:255|unique:users,email,'.$id,
+                'mobile' => 'required|min:11|unique:users,mobile,' . $id,
+                'email' => 'required|email|max:255|unique:users,email,' . $id,
                 'password' => 'nullable|min:8',
                 'address' => 'nullable|max:2000',
                 'avatar' => 'nullable|image|avatar'
@@ -255,7 +309,7 @@ class CustomerController extends Controller
                 $data['password'] = bcrypt($data['password']);
             }
 
-            User::where('id',$id)->update($data);
+            User::where('id', $id)->update($data);
             return redirect()->route('customers.index')->with('success', 'Customer updated successfully!');
         } catch (Exception $exp) {
             return redirect()->route('customers.index')->with('error', $exp->getMessage());
@@ -267,9 +321,14 @@ class CustomerController extends Controller
      */
     public function destroy($id)
     {
-        return $id;
         try {
-            User::where('id',$id)->delete();
+            $checkDependency = Booking::where('user_id', $id)->count('id');
+            if ($checkDependency == 0) {
+                return redirect()
+                    ->route('customers.index')
+                    ->with('error', 'Customer can not be deleted at this moment because he/she has reservation information!');
+            }
+            User::where('id', $id)->delete();
             return redirect()->route('customers.index')->with('success', 'Customer deleted successfully!');
         } catch (Exception $exp) {
             return redirect()->route('customers.index')->with('error', $exp->getMessage());

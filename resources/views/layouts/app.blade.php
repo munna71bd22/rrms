@@ -132,7 +132,7 @@
     $(document).ready(function () {
         setTimeout(function () {
             $(".bs-toast").fadeOut();
-        }, 4000);
+        }, 10000);
 
     });
 

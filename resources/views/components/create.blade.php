@@ -2,6 +2,8 @@
 
 @section('content')
 
+    @include('layouts.back-button')
+
     <div class="col-md-12">
         <div class="card mb-4">
 

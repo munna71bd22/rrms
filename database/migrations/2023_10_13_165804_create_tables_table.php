@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('tables', function (Blueprint $table) {
             $table->id();
-            $table->string('titile',100);
+            $table->string('title',100);
+            $table->string('tbl_type',20)->default('square');
             $table->unsignedInteger('floor_id');
             $table->unsignedInteger('room_id');
             $table->tinyInteger('chair_qty')->default(1);

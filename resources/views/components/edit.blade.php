@@ -2,6 +2,8 @@
 
 @section('content')
 
+    @include('layouts.back-button')
+
     <div class="col-md-12">
         <div class="card mb-4">
 
@@ -32,7 +34,7 @@
                                         @if( isset($field['pattern']))
                                             required="{{$field['pattern']}}"
                                         @endif
-                                        @if($field['name'] != 'password') value="{{ $obj->{$field['name']} ?? old($field['name'])}} @endif"
+                                        @if($field['name'] != 'password') value="{{$obj->{$field['name']} ?? old($field['name'])}} @endif"
                                     />
                                 @elseif($field['type'] == 'textarea')
                                     <textarea
@@ -42,7 +44,8 @@
                                         placeholder="{{$field['placeholder']}}"
                                         aria-label="{{$field['label']}}"
                                         @if($field['required'])  required="{{$field['required']}}"@endif
-                                    >@if($field['name'] != 'password'){{ $obj->{$field['name']} ?? old($field['name'])}}
+                                    >@if($field['name'] != 'password')
+                                            {{ $obj->{$field['name']} ?? old($field['name'])}}
                                         @endif</textarea>
                                 @endif
                                 @error($field['name'])

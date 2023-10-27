@@ -11,7 +11,7 @@
              aria-label="First group">
             @foreach($tools as $tool)
 
-                <a href="{{$tool['url']}}" text="{{$tool['name']}}"
+                <a href="{{$tool['url']}}" title="{{$tool['name']}}"
                    type="button"
                    class="{{$tool['class']}}">
                     <i class="{{$tool['icon']}}"></i>
@@ -31,7 +31,7 @@
         </div>
 
         <div class="container table-responsive text-nowrap">
-            <table class="table table-borderless table-strip" id="dataTable">
+            <table class="table table-borderless table-strip" id="dataTable-{{$pageID}}">
                 <thead>
                 <tr>
                     @foreach($columns as $col)
@@ -43,6 +43,10 @@
         </div>
     </div>
     <!-- Bootstrap Table with Header - Light -->
+    <form id="deleteForm" action="" method="POST">
+        @csrf
+        {!! method_field('delete') !!}
+    </form>
     @push('scripts')
         <script src="{{asset('assets/js/jquery.dataTables.min.js')}}"></script>
         <script>
@@ -50,7 +54,7 @@
 
             $(document).ready(function () {
 
-                dataTable = $('#dataTable').DataTable({
+                dataTable = $('#dataTable-{{$pageID}}').DataTable({
                     processing: true,
                     serverSide: true,
                     searching: true,
@@ -61,7 +65,6 @@
                         url: '{{route($data_route)}}',
                         method: 'GET',
                         data: function (d) {
-                            //d.division_id = $('#office_division_id').val()
                         }
                     },
                     autoWidth: false,
@@ -84,28 +87,21 @@
                         }
                     },
                     "columns": [
-                        {data: "name", name: "name", orderable: true, sortable: true},
-                        {data: "email", name: "email", orderable: false, sortable: false},
-                        {data: "avatar", name: "avatar", orderable: false, sortable: false},
-                        {data: "actions", name: "actions", orderable: false, sortable: false},
-                        /*
-                        {
-                            "data": function (row, type, set) {
-                                if (type === 'display' && row.current_promotion && row.current_promotion.department) {
-                                    return row.current_promotion.department.name;
-                                }
-                                return '';
-                            },
-                            "name": "current_promotion.department.name",
-                            orderable: false,
-                            sortable: false,
-                            searchable: false
-                         */
-
+                        @foreach($columns_for_datatable as $col)
+                        {data: "{{$col['data']}}", name: "{{$col['name']}}", orderable: {{$col['orderable']}}, sortable: {{$col['sortable']}} },
+                        @endforeach
                     ]
                 });
 
             });
+
+            function confirmDelete(url)
+            {
+                if(confirm("Are you sure want to delete this?")) {
+                    $('#deleteForm').attr('action',url);
+                    $('#deleteForm').submit();
+                }
+            }
 
         </script>
     @endpush
