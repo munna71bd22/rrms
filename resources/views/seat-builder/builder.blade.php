@@ -3,11 +3,6 @@
 @section('content')
 
     <style>
-        body {
-            margin-top: 30px;
-            margin-bottom: 30px;
-            background: #f2f2f2;
-        }
 
         .canvas-container {
             margin-right: auto;
@@ -16,15 +11,14 @@
     </style>
 
     <div class="container-fluid text-center">
-        <p class="text-muted">Choose where ever you want to sit in a restaurant <a
-                href="https://refreshless.com/nouislider/" target="_blank"></a></p>
+        <p class="text-muted">Choose where ever you want to sit in a restaurant</p>
         <div class="form-group admin-menu">
 
             <div class="btn-group">
 
                 <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#backDropModal"> &#9547; Floor
                 </button>
-                <select class="btn btn-secondary">
+                <select id="floor" name="floor" class="btn btn-secondary">
                     <option selected disabled>Select Floor</option>
                     @foreach($floors as $floor)
                         <option value="{{$floor->id}}">{{$floor->title}}</option>
@@ -37,7 +31,7 @@
                 <button class="btn btn-primary triangle">+ &#9651; Table</button>
                 <button class="btn btn-primary chair">+ Chair</button>
                 <button class="btn btn-danger remove">Remove</button>
-                <button class="btn btn-success remove">Save</button>
+                <button onclick="buildSeat()" class="btn btn-success remove">Save</button>
                 <!--
                 <button class="btn btn-danger customer-mode">Customer Mode</button>
                 <button class="btn btn-danger admin-mode">Admin Mode</button>
@@ -66,19 +60,19 @@
                 </div>
                 <div class="modal-body">
 
-                        <div class="row">
-                            <div class="col mb-3">
-                                <label for="nameBackdrop" class="form-label">Name</label>
-                                <input
-                                    type="text"
-                                    id="nameBackdrop"
-                                    class="form-control"
-                                    placeholder="Enter Name"
-                                    name="title"
-                                    required
-                                />
-                            </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label for="nameBackdrop" class="form-label">Name</label>
+                            <input
+                                type="text"
+                                id="nameBackdrop"
+                                class="form-control"
+                                placeholder="Enter Name"
+                                name="title"
+                                required
+                            />
                         </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
@@ -89,15 +83,15 @@
             </form>
         </div>
     </div>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div>
     <!--/ Bootstrap modals -->
     <!-- partial -->
     <script src="{{asset('assets/seat-builder/fabric.min.js')}}"></script>
     <script>
+        let buildData = {
+            floor_id: null,
+            canvasData: [],
+            items: []
+        };
         let canvas
         let number
         const grid = 30
@@ -313,7 +307,7 @@
                 number: number
             })
             canvas.add(g)
-            number++
+            number++;
             return g
         }
 
@@ -395,6 +389,7 @@
         }
 
         function snapToGrid(target) {
+            buildData.items.push({id:target.id,no:target.number,type:target.type,top:target.top})
             target.set({
                 left: Math.round(target.left / (grid / 2)) * grid / 2,
                 top: Math.round(target.top / (grid / 2)) * grid / 2
@@ -505,72 +500,35 @@
             document.querySelectorAll('.customer-menu')[0].style.display = 'none'
         })
 
-        function formatTime(val) {
-            const hours = Math.floor(val / 60)
-            const minutes = val % 60
-            const englishHours = hours > 12 ? hours - 12 : hours
-
-            const normal = hours + ':' + minutes + (minutes === 0 ? '0' : '')
-            const english = englishHours + ':' + minutes + (minutes === 0 ? '0' : '') + ' ' + (hours > 12 ? 'PM' : 'AM')
-
-            return normal + ' (' + english + ')'
-        }
-
-
         function addDefaultObjects() {
-            addChair(15, 105)
-            addChair(15, 135)
-            addChair(75, 105)
-            addChair(75, 135)
-            addChair(225, 75)
-            addChair(255, 75)
-            addChair(225, 135)
-            addChair(255, 135)
-            addChair(225, 195)
-            addChair(255, 195)
-            addChair(225, 255)
-            addChair(255, 255)
-            addChair(15, 195)
-            addChair(45, 195)
-            addChair(15, 255)
-            addChair(45, 255)
-            addChair(15, 315)
-            addChair(45, 315)
-            addChair(15, 375)
-            addChair(45, 375)
-            addChair(225, 315)
-            addChair(255, 315)
-            addChair(225, 375)
-            addChair(255, 375)
-            addChair(15, 435)
-            addChair(15, 495)
-            addChair(15, 555)
-            addChair(15, 615)
-            addChair(225, 615)
-            addChair(255, 615)
-            addChair(195, 495)
-            addChair(195, 525)
-            addChair(255, 495)
-            addChair(255, 525)
-            addChair(225, 675)
-            addChair(255, 675)
-
-            addRect(30, 90, 60, 90)
-            addRect(210, 90, 90, 60)
-            addRect(210, 210, 90, 60)
-            addRect(0, 210, 90, 60)
-            addRect(0, 330, 90, 60)
-            addRect(210, 330, 90, 60)
-            addRect(0, 450, 60, 60)
-            addRect(0, 570, 60, 60)
-            addRect(210, 480, 60, 90)
-            addRect(210, 630, 90, 60)
-
-            addBar(120, 0, 180, 60)
-
-            addWall(120, 510, 60, 60)
         }
 
-        addDefaultObjects()
+        addDefaultObjects();
+
+        $('#floor').on('change', function (e) {
+            buildData.floor_id = this.value;
+        })
+
+
+        function buildSeat() {
+            canvas = null;
+            let selectedFloor = $('#floor').val();
+            if (selectedFloor < 1) {
+                alert('please select floor first.Then try to save.')
+            } else {
+                $.ajax({
+                    url: '{{route('seat-builder.store')}}',
+                    type: 'POST',
+                    headers: {'X-CSRF-TOKEN': '{{@csrf_token()}}'},
+                    data: buildData,
+                    success: function (res) {
+                        alert(res.message)
+                    },
+                    error: function (res) {
+                        console.log(res)
+                    }
+                })
+            }
+        }
     </script>
 @endsection
