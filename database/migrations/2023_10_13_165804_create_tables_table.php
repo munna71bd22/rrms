@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('tables', function (Blueprint $table) {
             $table->id();
             $table->string('title',100);
+            $table->string('tbl_id',20);
+            $table->string('type',20)->default('table');
+            $table->string('room_no',20)->nullable();
             $table->string('tbl_type',20)->default('square');
+            $table->string('canvas_obj')->nullable();
             $table->unsignedInteger('floor_id');
-            $table->unsignedInteger('room_id');
-            $table->tinyInteger('chair_qty')->default(1);
             $table->timestamps();
         });
     }

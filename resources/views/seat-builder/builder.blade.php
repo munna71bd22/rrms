@@ -18,7 +18,7 @@
 
                 <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#backDropModal"> &#9547; Floor
                 </button>
-                <select id="floor" name="floor" class="btn btn-secondary">
+                <select onchange="setFloorId(this)" id="floor" name="floor" class="btn btn-secondary">
                     <option selected disabled>Select Floor</option>
                     @foreach($floors as $floor)
                         <option value="{{$floor->id}}">{{$floor->title}}</option>
@@ -505,19 +505,21 @@
 
         addDefaultObjects();
 
-        $('#floor').on('change', function (e) {
-            buildData.floor_id = this.value;
-        })
+        function setFloorId(t)
+        {
+            buildData.floor_id = t.value;
+            getBuildData();
+        }
 
 
         function buildSeat() {
-            canvas = null;
+            //canvas = null;
             let selectedFloor = $('#floor').val();
             if (selectedFloor < 1) {
                 alert('please select floor first.Then try to save.')
             } else {
                 $.ajax({
-                    url: '{{route('seat-builder.store')}}',
+                    url: '{{route('seat-builder.build')}}',
                     type: 'POST',
                     headers: {'X-CSRF-TOKEN': '{{@csrf_token()}}'},
                     data: buildData,
@@ -530,5 +532,32 @@
                 })
             }
         }
+        function getBuildData()
+        {
+            let floor_id = $('#floor').val();
+
+            $.ajax({
+                url: '{{route('seat-builder.get-build-data')}}',
+                type: 'GET',
+                data: {floor_id: floor_id},
+                success: function (res) {
+                    canvas.clear();
+                    res.data.map(function (obj,key){
+                        let item =  JSON.parse(obj.canvas_obj);
+                        if(obj.type == 'table') {
+                            addTriangle(0,parseInt(item.top));
+                        }
+                        else if(obj.type == 'chair') {
+                            addChair(0,parseInt(item.top))
+                        }
+                        console.log(obj)
+                    })
+                },
+                error: function (res) {
+                    console.log(res)
+                }
+            })
+        }
+
     </script>
 @endsection

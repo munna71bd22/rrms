@@ -54,7 +54,7 @@ class SeatController extends Controller
             'title' => 'Seat Builder',
             'pageID' => 'seat-builder-101',
             'data_route' => 'seat-builder.index',
-            'floors' => Floor::select(['id','title'])->get()
+            'floors' => Floor::select(['id', 'title'])->get()
         ]);
     }
 
@@ -106,13 +106,13 @@ class SeatController extends Controller
     {
         try {
             $validated = $request->validate([
-                'title' => 'required|max:255|unique:menus,title,'.$id,
+                'title' => 'required|max:255|unique:menus,title,' . $id,
             ]);
 
             $data = $request->except(['_token', '_method']);
 
-            Table::where('id', $id)->update($data);
-            return redirect()->route('seat-builder.index')->with('success', 'Table updated successfully!');
+            Floor::where('id', $id)->update($data);
+            return redirect()->route('seat-builder.index')->with('success', 'Floor updated successfully!');
         } catch (Exception $exp) {
             return redirect()->route('seat-builder.index')->with('error', $exp->getMessage());
         }
@@ -124,10 +124,70 @@ class SeatController extends Controller
     public function destroy($id)
     {
         try {
-            Table::where('id', $id)->delete();
-            return redirect()->route('seat-builder.index')->with('success', 'Table deleted successfully!');
+            Floor::where('id', $id)->delete();
+            return redirect()->route('seat-builder.index')->with('success', 'Floor deleted successfully!');
         } catch (Exception $exp) {
             return redirect()->route('seat-builder.index')->with('error', $exp->getMessage());
         }
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function build(Request $request): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $validated = $request->validate([
+                'floor_id' => 'required|integer',
+            ]);
+
+            $data = $request->except(['_token', '_method']);
+
+            foreach ($data['items'] as $item) {
+                Table::updateOrCreate(
+                    [
+                        'tbl_id' => $item['id']
+                    ],
+                    [
+                        'title' => $item['no'] ?? '',
+                        'tbl_id' => $item['id'],
+                        'type' => $item['type'],
+                        'tbl_type' => $item['type'],
+                        'canvas_obj' => json_encode($item),
+                        'floor_id' => $data['floor_id'],
+
+
+                    ]);
+            }
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Seats build successfully!',
+            ], 200);
+        } catch (Exception $exp) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $exp->getMessage(),
+            ], 405);
+        }
+    }
+
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getBuildData(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $model = Table::select(['id','title','tbl_type','type','room_no','canvas_obj','floor_id']);
+
+        if ($request->floor_id) {
+            $model->where('floor_id',$request->floor_id);
+        }
+        $data = $model->get();
+        return response()->json([
+            'status' => 'success',
+            'data' => $data
+        ], 200);
     }
 }

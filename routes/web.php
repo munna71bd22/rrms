@@ -35,6 +35,8 @@ Route::group(['prefix' => 'home', 'middleware' => 'auth'], function () {
 
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::resource('/seat-builder', App\Http\Controllers\SeatController::class);
+    Route::post('/seat-builder/build', [App\Http\Controllers\SeatController::class , 'build'])->name('seat-builder.build');
+    Route::get('/seat-builder/get/build-data', [App\Http\Controllers\SeatController::class , 'getBuildData'])->name('seat-builder.get-build-data');
     Route::resource('/menu-builder', App\Http\Controllers\MenuController::class);
     Route::resource('/customers', App\Http\Controllers\CustomerController::class);
     Route::resource('/bookings', App\Http\Controllers\BookingController::class);
