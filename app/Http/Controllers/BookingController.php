@@ -16,7 +16,7 @@ class BookingController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $items = Booking::select(['id', 'title', 'price_before', 'price', 'photo'])->orderBy('created_at', 'DESC');
+            $items = Booking::select(['*'])->orderBy('created_at', 'DESC');
             return DataTables::eloquent($items)
                 ->addColumn('photo', function ($item) {
                     $path = "booking/" . $item->id . ".png";
@@ -54,23 +54,23 @@ class BookingController extends Controller
             'title' => 'Booking List',
             'pageID' => 'booking101',
             'data_route' => 'bookings.index',
-            'columns' => ['Title', 'Previous Price', 'Price', 'Photo', 'Actions'],
+            'columns' => ['Mobile', 'Start Time', 'End Time', 'Photo', 'Actions'],
             'columns_for_datatable' => [
                 [
-                    "data" => "title",
-                    "name" => "title",
+                    "data" => "customer_mobile",
+                    "name" => "customer_mobile",
                     "orderable" => "true",
                     "sortable" => "true",
                 ],
                 [
-                    "data" => "price_before",
-                    "name" => "price_before",
+                    "data" => "booking_start_time",
+                    "name" => "booking_start_time",
                     "orderable" => "true",
                     "sortable" => "true",
                 ],
                 [
-                    "data" => "price",
-                    "name" => "price",
+                    "data" => "booking_end_time",
+                    "name" => "booking_end_time",
                     "orderable" => "true",
                     "sortable" => "true",
                 ],

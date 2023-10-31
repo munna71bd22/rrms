@@ -140,29 +140,32 @@ class SeatController extends Controller
         try {
             $validated = $request->validate([
                 'floor_id' => 'required|integer',
+                'tbl_id.*' => 'required',
             ]);
 
             $data = $request->except(['_token', '_method']);
 
+            $insertedTblIds = [];
             foreach ($data['items'] as $item) {
-                Table::updateOrCreate(
+                if(Table::updateOrCreate(
                     [
-                        'tbl_id' => $item['id']
+                        'tbl_id' => $item['id'],
+                        'floor_id' => $data['floor_id']
                     ],
                     [
-                        'title' => $item['no'] ?? '',
+                        'title' => $item['title'] ?? '',
                         'tbl_id' => $item['id'],
-                        'type' => $item['type'],
-                        'tbl_type' => $item['type'],
                         'canvas_obj' => json_encode($item),
                         'floor_id' => $data['floor_id'],
-
-
-                    ]);
+                    ]) ) {
+                    $insertedTblIds[] = $item['id'];
+                }
             }
+            Table::where('floor_id',$data['floor_id'])->whereNotIn('tbl_id',$insertedTblIds)->delete();
+
             return response()->json([
                 'status' => 'success',
-                'message' => 'Seats build successfully!',
+                'message' => 'Seats built successfully!',
             ], 200);
         } catch (Exception $exp) {
             return response()->json([
@@ -179,7 +182,7 @@ class SeatController extends Controller
      */
     public function getBuildData(Request $request): \Illuminate\Http\JsonResponse
     {
-        $model = Table::select(['id','title','tbl_type','type','room_no','canvas_obj','floor_id']);
+        $model = Table::select(['id','title','canvas_obj','floor_id']);
 
         if ($request->floor_id) {
             $model->where('floor_id',$request->floor_id);

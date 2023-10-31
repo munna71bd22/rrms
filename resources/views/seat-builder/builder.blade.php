@@ -12,7 +12,7 @@
 
     <div class="container-fluid text-center">
         <p class="text-muted">Choose where ever you want to sit in a restaurant</p>
-        <div class="form-group admin-menu">
+        <div class="form-group admin-menu" id="builderDiv">
 
             <div class="btn-group">
 
@@ -34,16 +34,15 @@
                     <option value="6">6 Seats Table</option>
                     <option value="8">8 Seats Table</option>
                     <option value="10">10 Seats Table</option>
-                    <option value="12">12 Seats Table</option>
                     <option value="16">16 Seats Table</option>
                 </select>
 
                 <button class="btn btn-danger remove">Remove</button>
                 <button onclick="buildSeat()" class="btn btn-success remove">Save</button>
-                <!--
+
                 <button class="btn btn-danger customer-mode">Customer Mode</button>
                 <button class="btn btn-danger admin-mode">Admin Mode</button>
-                -->
+
 
             </div>
         </div>
@@ -127,6 +126,26 @@
             }
         })
 
+
+        document.querySelectorAll('.customer-mode')[0].addEventListener('click', function () {
+            canvas.getObjects().map(o => {
+                o.hasControls = false
+                o.lockMovementX = true
+                o.lockMovementY = true
+                if (o.type === 'chair' || o.type === 'bar' || o.type === 'wall') {
+                    o.selectable = false
+                }
+                o.borderColor = '#38A62E'
+                o.borderScaleFactor = 2.5
+            })
+            canvas.selection = false
+            canvas.hoverCursor = 'pointer'
+            canvas.discardActiveObject()
+            canvas.renderAll()
+            document.querySelectorAll('.admin-menu')[0].style.display = 'none'
+            document.querySelectorAll('.customer-menu')[0].style.display = 'block'
+        })
+
         /*
 
         document.querySelectorAll('.customer-mode')[0].addEventListener('click', function () {
@@ -185,6 +204,7 @@
             if (selectedFloor < 1) {
                 alert('please select floor first.Then try to save.')
             } else {
+                console.log(buildData)
                 $.ajax({
                     url: '{{route('seat-builder.build')}}',
                     type: 'POST',
@@ -208,10 +228,10 @@
                 type: 'GET',
                 data: {floor_id: floor_id},
                 success: function (res) {
+                    canvas.clear()
                     res.data.map(function (obj, key) {
                         let item = JSON.parse(obj.canvas_obj);
-                        canvas.add(item);
-                        console.log(obj)
+                        setTable(item)
                     })
                 },
                 error: function (res) {
@@ -238,9 +258,43 @@
                     fontSize: 15,
                     fill: 'black'
                 });
-                let group = new fabric.Group([oImg, text, title],{
+                let group = new fabric.Group([oImg, text, title], {
                     id: generateId(),
-                    title: title
+                    title: title,
+                    tbl_no: t.value
+                })
+                let obj = canvas.add(group);
+            });
+
+        }
+
+
+        function setTable(item) {
+            let tblImgUrl = "../assets/seat-builder/tbl" + item.tbl_no + ".png";
+
+            fabric.Image.fromURL(tblImgUrl, function (img) {
+                var oImg = img.set({left: 0, top: 0}).scale(.75);
+                let text = new fabric.Text("Table with " + item.tbl_no + ' Seat', {
+                    left: 10,
+                    top: 150,
+                    fontSize: 15,
+                    fill: 'black'
+                });
+                let title = new fabric.Text(item.title ?? '', {
+                    left: 10,
+                    top: 170,
+                    fontSize: 15,
+                    fill: 'black'
+                });
+                let group = new fabric.Group([oImg, text, title], {
+                    id: item.id,
+                    title: title,
+                    tbl_no: item.tbl_no,
+                    left: parseInt(item.left),
+                    top: parseInt(item.top),
+                    scaleX: parseFloat(item.scaleX),
+                    scaleY: parseFloat(item.scaleY)
+
                 })
                 let obj = canvas.add(group);
             });
@@ -253,15 +307,47 @@
 
         })
 
-        canvas.on('object:store', function (e) {
+
+        canvas.on('object:added', function (e) {
             pushItemForStore(e)
         })
 
+        canvas.on('object:removed', function (e) {
+            buildData.items.filter(function (object, key) {
+                if (object.id == e.target.id) {
+                    buildData.items[key] = [];
+                }
+            });
+        })
+
+        canvas.on('object:selected', function (e) {
+
+        })
+
         function pushItemForStore(e) {
-            let scaledObject = e.target;
-            buildData.items.push(scaledObject)
-            console.log('Width =  ' + scaledObject.getWidth());
-            console.log('Height = ' + scaledObject.getHeight());
+            let item = {
+                id: e.target.id,
+                top: e.target.top,
+                left: e.target.left,
+                title: e.target.title.text,
+                width: e.target.getWidth(),
+                height: e.target.getHeight(),
+                scaleX: e.target.scaleX,
+                scaleY: e.target.scaleY,
+                tbl_no: e.target.tbl_no
+
+            }
+            let f = 0;
+            f = buildData.items.filter(function (object, key) {
+                if (object.id == item.id) {
+                    buildData.items[key] = item;
+                    return 1;
+                }
+            });
+
+            if (f == 0) {
+                buildData.items.push(item)
+            }
         }
 
         function generateId() {

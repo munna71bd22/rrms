@@ -7,6 +7,7 @@ use App\Models\Menu;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class MenuController extends Controller
@@ -20,8 +21,8 @@ class MenuController extends Controller
             $items = Menu::select(['id', 'title', 'price_before', 'price', 'photo'])->orderBy('created_at', 'DESC');
             return DataTables::eloquent($items)
                 ->addColumn('photo', function ($item) {
-                    $path = "menu/" . $item->id . ".png";
-                    $imgSrc = file_exists($path) ? asset($path) : asset('assets/img/avatars/menu.png');
+                    $path = storage_path('/app/public/' . $item->photo);
+                    $imgSrc = file_exists($path) ? asset('storage/' . $item->photo) : asset('assets/img/avatars/menu.png');
                     return '<img width="30" height="30" src=' . $imgSrc . '>';
                 })
                 ->addColumn('actions', function ($item) {
@@ -144,7 +145,7 @@ class MenuController extends Controller
                     'label' => 'Photo',
                     'placeholder' => 'Upload Menu Photo',
                     'icon' => 'bx bx-cloud-upload',
-                    'width' => '4',
+                    'width' => '6',
                     'name' => 'photo',
                     'type' => 'file',
                     'file_type' => 'image',
@@ -164,12 +165,15 @@ class MenuController extends Controller
                 'title' => 'required|max:255|unique:menus',
                 'price_before' => 'required|min:1',
                 'price' => 'required|min:1',
-                'photo' => 'nullable|image|photo'
+                'photo' => 'required|image|mimes:jpeg,png,jpg|max:512',
             ]);
 
             $data = $request->except(['_token', '_method']);
 
+            $image_path = $request->file('photo')->store('menu', 'public');
+            $data['photo'] = $image_path;
             Menu::create($data);
+
             return redirect()->route('menu-builder.index')->with('success', 'New menu created successfully!');
         } catch (Exception $exp) {
             return redirect()->route('menu-builder.index')->with('error', $exp->getMessage());
@@ -237,7 +241,7 @@ class MenuController extends Controller
                         'label' => 'Photo',
                         'placeholder' => 'Upload Menu Photo',
                         'icon' => 'bx bx-cloud-upload',
-                        'width' => '4',
+                        'width' => '6',
                         'name' => 'photo',
                         'type' => 'file',
                         'file_type' => 'image',
@@ -254,16 +258,30 @@ class MenuController extends Controller
     public function update(Request $request, $id)
     {
         try {
+
             $validated = $request->validate([
-                'title' => 'required|max:255|unique:menus,title,'.$id,
+                'title' => 'required|max:255|unique:menus,title,' . $id,
                 'price_before' => 'required|min:1',
                 'price' => 'required|min:1',
-                'photo' => 'nullable|image|photo'
+                'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:512',
             ]);
 
             $data = $request->except(['_token', '_method']);
 
-            Menu::where('id', $id)->update($data);
+
+            $obj = Menu::where('id', $id)->first();
+
+            if($request->file('photo')) {
+                if ($obj->photo && file_exists(storage_path('app/public/' . $obj->photo))) {
+                    unlink(storage_path('/app/public/' . $obj->photo));
+
+                    $image_path = $request->file('photo')->store('menu', 'public');
+                    $data['photo'] = $image_path;
+                }
+            }
+
+            $obj->fill($data)->save();
+
             return redirect()->route('menu-builder.index')->with('success', 'Menu updated successfully!');
         } catch (Exception $exp) {
             return redirect()->route('menu-builder.index')->with('error', $exp->getMessage());
@@ -276,7 +294,11 @@ class MenuController extends Controller
     public function destroy($id)
     {
         try {
-            Menu::where('id', $id)->delete();
+            $obj = Menu::where('id', $id)->first();
+            if ($obj->photo && file_exists(storage_path('app/public/' . $obj->photo))) {
+                unlink(storage_path('/app/public/' . $obj->photo));
+            }
+            $obj->delete();
             return redirect()->route('menu-builder.index')->with('success', 'Menu deleted successfully!');
         } catch (Exception $exp) {
             return redirect()->route('menu-builder.index')->with('error', $exp->getMessage());

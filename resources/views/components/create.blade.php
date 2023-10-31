@@ -10,8 +10,9 @@
             <div class="card-body">
                 <form method="{{$method}}" action="{{route($route)}}" enctype="multipart/form-data">
                     @csrf
+                    <div class="row">
                     @foreach($fields as $field)
-                        <div class="col mb-{{$field['width']}}">
+                        <div class="col-{{$field['width']}}">
                             <label class="form-label">
                                 {{$field['label']}}
                             </label>
@@ -54,8 +55,9 @@
                         </div>
 
                     @endforeach
+                    </div>
                     <br>
-                    <div class="mb-4">
+                    <div class="mb-4 bx-pull-right">
                         <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </form>

@@ -19,7 +19,7 @@
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
                     <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                         <div class="avatar avatar-online">
-                            <img src="{{ Auth::user()->avatar ?? asset('assets/img/avatars/1.png') }}"" alt
+                            <img src="{{ Auth::user()->avatar ? asset('/storage/'.Auth::user()->avatar): asset('assets/img/avatars/1.png') }}" alt
                             class="w-px-40 h-auto rounded-circle"/>
                         </div>
                     </a>
@@ -31,7 +31,7 @@
                                 <div class="d-flex">
                                     <div class="flex-shrink-0 me-3">
                                         <div class="avatar avatar-online">
-                                            <img src="{{ Auth::user()->avatar ?? asset('assets/img/avatars/1.png') }}"
+                                            <img src="{{ Auth::user()->avatar ? asset('/storage/'.Auth::user()->avatar):  asset('assets/img/avatars/1.png') }}"
                                                  alt
                                                  class="w-px-40 h-auto rounded-circle"/>
                                         </div>
@@ -84,7 +84,7 @@
     @php
         $alertType = session('success') ? 'primary' : (session('error') ? 'danger' : 'info');
     @endphp
-    <div class="bs-toast toast toast-placement-ex m-2 bg-{{$alertType}} bottom-0 start-0 fade show" role="alert"
+    <div class="bs-toast toast toast-placement-ex m-2 bg-{{$alertType}} bottom-0 end-0 fade show" role="alert"
          aria-live="assertive" aria-atomic="true" data-delay="2000">
         <div class="toast-header">
             <i class="bx bx-bell me-2"></i>
@@ -99,7 +99,7 @@
 @endif
 
 @if ($errors->any())
-    <div class="bs-toast toast toast-placement-ex m-2 bg-danger bottom-0 start-0 fade show" role="alert"
+    <div class="bs-toast toast toast-placement-ex m-2 bg-danger bottom-0 end-0 fade show" role="alert"
          aria-live="assertive" aria-atomic="true" data-delay="2000">
         <div class="toast-header">
             <i class="bx bx-bell me-2"></i>

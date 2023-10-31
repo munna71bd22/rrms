@@ -11,8 +11,9 @@
                 <form method="{{$method}}" action="{{route($route, $obj->id)}}" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="_method" value="PATCH">
+                    <div class="row">
                     @foreach($fields as $field)
-                        <div class="col mb-{{$field['width']}}">
+                        <div class="col-{{$field['width']}}">
                             <label class="form-label">
                                 {{$field['label']}}
                             </label>
@@ -34,7 +35,7 @@
                                         @if( isset($field['pattern']))
                                             required="{{$field['pattern']}}"
                                         @endif
-                                        @if($field['name'] != 'password') value="{{$obj->{$field['name']} ?? old($field['name'])}} @endif"
+                                        @if($field['name'] != 'password'&& $field['name'] != 'photo' && $field['name'] != 'avatar') value="{{$obj->{$field['name']} ?? old($field['name'])}} @endif"
                                     />
                                 @elseif($field['type'] == 'textarea')
                                     <textarea
@@ -44,9 +45,7 @@
                                         placeholder="{{$field['placeholder']}}"
                                         aria-label="{{$field['label']}}"
                                         @if($field['required'])  required="{{$field['required']}}"@endif
-                                    >@if($field['name'] != 'password')
-                                            {{ $obj->{$field['name']} ?? old($field['name'])}}
-                                        @endif</textarea>
+                                    >{{ $obj->{$field['name']} ?? old($field['name'])}}</textarea>
                                 @endif
                                 @error($field['name'])
                                 <span class="invalid-feedback" role="alert">
@@ -57,8 +56,9 @@
                         </div>
 
                     @endforeach
+                    </div>
                     <br>
-                    <div class="mb-4">
+                    <div class="mb-4 bx-pull-right">
                         <button type="submit" class="btn btn-primary">Update</button>
                     </div>
                 </form>
