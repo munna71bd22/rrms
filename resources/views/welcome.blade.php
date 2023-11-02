@@ -248,70 +248,32 @@
                                 </div>
                             </a>
                         </li>
+
+                        <li class="nav-item">
+                            <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill"
+                               href="https://themewagon.github.io/Jafran/index.html#tab-4">
+                                <i class="fa fa-utensils fa-2x text-primary"></i>
+                                <div class="ps-3">
+                                    <small class="text-body">Fast food</small>
+                                    <h6 class="mt-n1 mb-0">Others</h6>
+                                </div>
+                            </a>
+                        </li>
                     </ul>
                     <div class="tab-content">
                         <div id="tab-1" class="tab-pane fade show p-0 active">
-                            <div class="row g-4">
-                                <div class="col-lg-6">
-                                    <div class="d-flex align-items-center">
-                                        <img class="flex-shrink-0 img-fluid rounded" src="website/menu-1.jpg" alt=""
-                                             style="width: 80px;">
-                                        <div class="w-100 d-flex flex-column text-start ps-4">
-                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                                <span>Chicken Burger</span>
-                                                <span class="text-primary">$115</span>
-                                            </h5>
-                                            <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo
-                                                diam</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="d-flex align-items-center">
-                                        <img class="flex-shrink-0 img-fluid rounded" src="website/menu-2.jpg" alt=""
-                                             style="width: 80px;">
-                                        <div class="w-100 d-flex flex-column text-start ps-4">
-                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                                <span>Chicken Burger</span>
-                                                <span class="text-primary">$115</span>
-                                            </h5>
-                                            <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo
-                                                diam</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="d-flex align-items-center">
-                                        <img class="flex-shrink-0 img-fluid rounded" src="website/menu-3.jpg" alt=""
-                                             style="width: 80px;">
-                                        <div class="w-100 d-flex flex-column text-start ps-4">
-                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                                <span>Chicken Burger</span>
-                                                <span class="text-primary">$115</span>
-                                            </h5>
-                                            <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo
-                                                diam</small>
-                                        </div>
-                                    </div>
-                                </div>
 
-
-                                <div class="col-lg-6">
-                                    <div class="d-flex align-items-center">
-                                        <img class="flex-shrink-0 img-fluid rounded" src="website/menu-8.jpg" alt=""
-                                             style="width: 80px;">
-                                        <div class="w-100 d-flex flex-column text-start ps-4">
-                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                                <span>Chicken Burger</span>
-                                                <span class="text-primary">$115</span>
-                                            </h5>
-                                            <small class="fst-italic">Ipsum ipsum clita erat amet dolor justo
-                                                diam</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
+                        <div id="tab-2" class="tab-pane fade show p-0">
+
+                        </div>
+                        <div id="tab-3" class="tab-pane fade show p-0">
+
+                        </div>
+                        <div id="tab-4" class="tab-pane fade show p-0">
+
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -323,13 +285,26 @@
         <div id="book-table" class="container-xxl py-5 px-0 wow fadeInUp" data-wow-delay="0.1s"
              style="visibility: visible; animation-delay: 0.1s; animation-name: fadeInUp;">
             <div class="row g-0">
+
                 <div class="col-md-6">
-                    <div class="video">
-                        <button type="button" class="btn-play" data-bs-toggle="modal"
-                                data-src="https://www.youtube.com/embed/DWRcNpR6Kdc" data-bs-target="#videoModal">
-                            <span></span>
-                        </button>
+                    <div class="w-100 d-flex flex-column text-start ps-4">
+                        <br>
+                        <h5 class="d-flex justify-content-between border-bottom pb-2">
+                            Choose where ever you want to sit in a restaurant
+                        </h5>
+                        <small style="color: orange;">Select floor first & then add your desired table by clicking on
+                            table icon</small>
                     </div>
+                    <div class="col-md-6 w-75 d-flex flex-column text-start ps-4">
+                        <div class="form-floating" data-target-input="nearest">
+                            <select class="form-select" id="floor_id" name="floor_id">
+                                <option value="" disabled selected>
+                                </option>
+                            </select>
+                            <label for="datetime">Floor</label>
+                        </div>
+                    </div>
+                    <canvas id="canvas" width="600" height="600"></canvas>
                 </div>
                 <div class="col-md-6 bg-dark d-flex align-items-center">
                     <div class="p-5 wow fadeInUp" data-wow-delay="0.2s"
@@ -350,6 +325,20 @@
                                         <label for="name">Your Name</label>
                                     </div>
                                 </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="customer_mobile"
+                                               name="customer_mobile" placeholder="Mobile"
+
+                                               @if(Auth::user())
+                                                   value="{{Auth::user()->mobile}}"
+                                               readonly
+                                            @endif >
+
+                                        <label for="name">Mobile</label>
+                                    </div>
+                                </div>
                                 <div class="col-md-6">
                                     <div class="form-floating">
                                         <input type="email" class="form-control" id="email" placeholder="Your Email"
@@ -364,7 +353,9 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating date" id="date3" data-target-input="nearest">
-                                        <input type="text" class="form-control datetimepicker-input" id="datetime"
+                                        <input type="text" class="form-control datetimepicker-input"
+                                               id="booking_date"
+                                               name="booking_date"
                                                placeholder="Date &amp; Time" data-target="#date3"
                                                data-toggle="datetimepicker">
                                         <label for="datetime">Date &amp; Time</label>
@@ -372,58 +363,47 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <div class="form-floating" id="date3" data-target-input="nearest">
-                                        <select class="form-select" id="select1">
-                                            <option value="1">1st</option>
-                                            <option value="2">2nd</option>
-                                            <option value="3">3rd</option>
-                                        </select>
-                                        <label for="datetime">Floor</label>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-floating" id="date3" data-target-input="nearest">
-                                        <select class="form-select" id="select1">
-                                            <option value="1">111</option>
-                                            <option value="2">222</option>
-                                            <option value="3">333</option>
-                                        </select>
-                                        <label for="datetime">Room No</label>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-floating" id="date3" data-target-input="nearest">
-                                        <select class="form-select" id="select1">
-                                            <option value="1">2 seat</option>
-                                            <option value="2">4 seats</option>
-                                            <option value="3">6 seats</option>
-                                            <option value="3">family dining table 12 seats</option>
-                                        </select>
-                                        <label for="datetime">Table</label>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
                                     <div class="form-floating">
-                                        <select class="form-select" id="select1">
-                                            <option value="1">People 1</option>
-                                            <option value="2">People 2</option>
-                                            <option value="3">People 3</option>
-                                        </select>
-                                        <label for="select1">No Of People</label>
+                                        <input type="number" name="guest_qty" id="guest_qty" class="form-control">
+                                        <label for="select1">No Of Guest</label>
                                     </div>
                                 </div>
+
+
+                                <div class="col-md-12">
+
+                                    <label class="col-md-12" for="tbl_id" style="color: orange">
+                                        Table
+                                        <select id="tbl_id" name="tbl_id" multiple>
+
+                                        </select>
+                                    </label>
+
+                                </div>
+
+                                <div class="col-md-12">
+
+                                    <label class="col-md-12" for="menus" style="color: orange">
+                                        Menu
+                                        <select id="menus" name="menus" multiple>
+
+                                        </select>
+                                    </label>
+
+                                </div>
+
+
                                 <div class="col-12">
                                     <div class="form-floating">
-                                        <textarea class="form-control" placeholder="Special Request" id="message"
+                                        <textarea class="form-control" placeholder="Special Request"
+                                                  id="remarks"
+                                                  name="remarks"
                                                   style="height: 100px"></textarea>
                                         <label for="message">Special Request</label>
                                     </div>
                                 </div>
                                 <div class="col-12">
-                                    <button class="btn btn-primary w-100 py-3" type="submit">Book Now</button>
+                                    <button onclick="makeBooking()" class="btn btn-primary w-100 py-3" type="button">Book Now</button>
                                 </div>
                             </div>
                         </form>
@@ -432,24 +412,7 @@
             </div>
         </div>
 
-        <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
-             style="display: none;">
-            <div class="modal-dialog">
-                <div class="modal-content rounded-0">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Youtube Video</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- 16:9 aspect ratio -->
-                        <div class="ratio ratio-16x9">
-                            <iframe class="embed-responsive-item" src="#" id="video" allowfullscreen=""
-                                    allowscriptaccess="always" allow="autoplay"></iframe>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
         <!-- Reservation Start -->
 
 
@@ -510,21 +473,209 @@
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top" style="display: none;"><i
                 class="bi bi-arrow-up"></i></a>
     </div>
+</div>
 
-    <!-- JavaScript Libraries -->
-    <script src="website/jquery-3.4.1.min.js.download"></script>
-    <script src="website/bootstrap.bundle.min.js.download"></script>
-    <script src="website/wow.min.js.download"></script>
-    <script src="website/easing.min.js.download"></script>
-    <script src="website/waypoints.min.js.download"></script>
-    <script src="website/counterup.min.js.download"></script>
-    <script src="website/owl.carousel.min.js.download"></script>
-    <script src="website/moment.min.js.download"></script>
-    <script src="website/moment-timezone.min.js.download"></script>
-    <script src="website/tempusdominus-bootstrap-4.min.js.download"></script>
+<!-- JavaScript Libraries -->
+<script src="website/jquery-3.4.1.min.js.download"></script>
+<script src="website/bootstrap.bundle.min.js.download"></script>
+<script src="website/wow.min.js.download"></script>
+<script src="website/easing.min.js.download"></script>
+<script src="website/waypoints.min.js.download"></script>
+<script src="website/counterup.min.js.download"></script>
+<script src="website/owl.carousel.min.js.download"></script>
+<script src="website/moment.min.js.download"></script>
+<script src="website/moment-timezone.min.js.download"></script>
+<script src="website/tempusdominus-bootstrap-4.min.js.download"></script>
 
-    <!-- Template Javascript -->
-    <script src="website/main.js.download"></script>
+<!-- Template Javascript -->
+<script src="website/main.js.download"></script>
+<script src="{{asset('assets/seat-builder/fabric.min.js')}}"></script>
+<link href="{{asset('assets/css/select2.min.css')}}" rel="stylesheet"/>
+<script src="{{asset('assets/js/select2.min.js')}}"></script>
+<script>
+
+    $('#floor_id').on('change', function () {
+        getBuildData()
+    })
+
+    function getBuildData() {
+        let floor_id = $('#floor_id').val();
+
+        $.ajax({
+            url: '{{route('tables')}}',
+            type: 'GET',
+            data: {floor_id: floor_id},
+            success: function (res) {
+                canvas.clear()
+                res.data.map(function (obj, key) {
+                    let item = JSON.parse(obj.canvas_obj);
+                    setTable(item)
+                })
+            },
+            error: function (res) {
+                console.log(res)
+            }
+        })
+    }
+
+    function getAllMenu() {
+        $.ajax({
+            url: '{{route('menus')}}',
+            type: 'GET',
+            success: function (res) {
+                let items1 = items2 = items3 = items4 = `<div class="row g-4">`;
+                res.data.map(function (obj, key) {
+                    let item = `<div class="col-lg-6">
+                                    <div class="d-flex align-items-center">
+                                        <img class="flex-shrink-0 img-fluid rounded" src="/storage/${obj.photo}" alt=""  height="100px" style="height: 80px;">
+                                        <div class="w-100 d-flex flex-column text-start ps-4">
+                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                                <span>${obj.title}</span>
+
+                                                <span style="text-decoration:line-through;color:#f04858;">${obj.price_before > obj.price ? '৳' + obj.price_before : ''}</span>
+                                                <span class="text-primary">৳${obj.price}</span>
+                                            </h5>
+
+                                        </div>
+                                    </div>
+                                </div>`;
+                    if (obj.type == 'Breakfast') {
+                        items1 += item;
+                    } else if (obj.type == 'Launch') {
+                        items2 += item;
+                    } else if (obj.type == 'Dinner') {
+                        items3 += item;
+                    } else if (obj.type == 'Others') {
+                        items4 += item;
+                    }
+                    $('#menus').append(`<option value="${obj.id}">${obj.title}</option>`);
+                })
+                items1 += `</div>`;
+                items2 += `</div>`;
+                items3 += `</div>`;
+                items4 += `</div>`;
+                $('#tab-1').html(items1);
+                $('#tab-2').html(items2);
+                $('#tab-3').html(items3);
+                $('#tab-4').html(items4);
+            },
+            error: function (res) {
+                console.log(res)
+            }
+        })
+    }
+
+    function getAllFloor() {
+        $.ajax({
+            url: '{{route('floors')}}',
+            type: 'GET',
+            success: function (res) {
+                res.data.map(function (obj, key) {
+                    $('#floor_id').append(`<option value="${obj.id}">${obj.title}</option>`);
+                })
+            },
+            error: function (res) {
+                console.log(res)
+            }
+        })
+    }
+
+    getAllMenu();
+    getAllFloor();
+    getBuildData();
+
+
+    let canvas
+    let canvasEl = document.getElementById('canvas')
+    canvas = new fabric.Canvas('canvas')
+
+
+    function setTable(item) {
+        let tblImgUrl = "../assets/seat-builder/tbl" + item.tbl_no + ".png";
+
+        fabric.Image.fromURL(tblImgUrl, function (img) {
+            var oImg = img.set({left: 0, top: 20}).scale(.5);
+
+            let title = new fabric.Text(item.title ?? '', {
+                left: 10,
+                top: 0,
+                fontSize: 15,
+                fill: 'black'
+            });
+            let group = new fabric.Group([oImg, title], {
+                id: item.id,
+                title: title,
+                tbl_no: item.tbl_no,
+                left: parseInt(item.left),
+                top: parseInt(item.top),
+                scaleX: parseFloat(item.scaleX),
+                scaleY: parseFloat(item.scaleY),
+                hasControls: false,
+                lockMovementX: true,
+                lockMovementY: true,
+                borderColor: '#38A62E',
+                borderScaleFactor: 2.5
+
+            })
+            canvas.add(group);
+            canvas.selection = false
+            canvas.hoverCursor = 'pointer'
+        });
+
+    }
+
+    $('#menus').select2({
+        width: '100%',
+    })
+    $('#tbl_id').select2({
+        width: '100%',
+    })
+
+    canvas.on('object:selected', function (e) {
+        // Set the value, creating a new option if necessary
+        if ($('#tbl_id').find("option[value='" + e.target.id + "']").length) {
+            //$("#orders_shipping_from option[value='" + e.target.id + "']").remove().trigger('change');
+            //$('#tbl_id').val(e.target.id).trigger('change');
+            alert('you have already added this table. If you want to remove then please click on close icon of table drop down container')
+        } else {
+            // Create a DOM Option and pre-select by default
+            let newOption = new Option(e.target.title.text, e.target.id, true, true);
+            // Append it to the select
+            $('#tbl_id').append(newOption).trigger('change');
+        }
+    })
+
+    function makeBooking() {
+        let tblIds = $('#tbl_id').val();
+        if (tblIds.length == 0) {
+            alert('please add table first.Then try to book.')
+        } else {
+            $.ajax({
+                url: '{{route('make-booking')}}',
+                type: 'POST',
+                headers: {'X-CSRF-TOKEN': '{{@csrf_token()}}'},
+                data: {
+                    tblIds: tblIds,
+                    name: $('#name').val(),
+                    email: $('#email').val(),
+                    customer_mobile: $('#customer_mobile').val(),
+                    booking_date: $('#booking_date').val(),
+                    guest_qty: $('#guest_qty').val(),
+                    menus: $('#menus').val(),
+                    remarks: $('#remarks')
+                },
+                success: function (res) {
+                    alert(res.message)
+                },
+                error: function (res) {
+                    console.log(res)
+                }
+            })
+        }
+    }
+
+
+</script>
 
 
 </body>

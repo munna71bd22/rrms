@@ -21,8 +21,28 @@
                             <span id="basic-icon-default-fullname2" class="input-group-text">
                                 <i class="{{$field['icon']}}"></i>
                             </span>
+                                @if($field['type'] == 'select')
+                                    <select  name="{{$field['name']}}"
+                                    {{$field['select_type']}}"
+                                    class="form-control @error($field['name']) is-invalid @enderror"
+                                    @if($field['required'])  required="{{$field['required']}}"@endif >
+                                    <option disabled selected value="">Select</option>
+                                    @foreach($field['options'] as $option)
+                                        <option @if($obj->{$field['name']} == $option['id']) selected @endif value="{{$option['id']}}">{{$option['value']}}</option>
+                                        @endforeach
+                                        </select>
 
-                                @if($field['type'] != 'textarea')
+                                @elseif($field['type'] == 'textarea')
+                                    <textarea
+                                        type="{{$field['type']}}"
+                                        name="{{$field['name']}}"
+                                        class="form-control @error($field['name']) is-invalid @enderror"
+                                        placeholder="{{$field['placeholder']}}"
+                                        aria-label="{{$field['label']}}"
+                                        @if($field['required'])  required="{{$field['required']}}"@endif
+                                    >{{ $obj->{$field['name']} ?? old($field['name'])}}</textarea>
+
+                                @else($field['type'] != 'textarea')
                                     <input
                                         type="{{$field['type']}}"
                                         name="{{$field['name']}}"
@@ -37,15 +57,7 @@
                                         @endif
                                         @if($field['name'] != 'password'&& $field['name'] != 'photo' && $field['name'] != 'avatar') value="{{$obj->{$field['name']} ?? old($field['name'])}} @endif"
                                     />
-                                @elseif($field['type'] == 'textarea')
-                                    <textarea
-                                        type="{{$field['type']}}"
-                                        name="{{$field['name']}}"
-                                        class="form-control @error($field['name']) is-invalid @enderror"
-                                        placeholder="{{$field['placeholder']}}"
-                                        aria-label="{{$field['label']}}"
-                                        @if($field['required'])  required="{{$field['required']}}"@endif
-                                    >{{ $obj->{$field['name']} ?? old($field['name'])}}</textarea>
+
                                 @endif
                                 @error($field['name'])
                                 <span class="invalid-feedback" role="alert">

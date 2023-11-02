@@ -18,7 +18,7 @@ class MenuController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $items = Menu::select(['id', 'title', 'price_before', 'price', 'photo'])->orderBy('created_at', 'DESC');
+            $items = Menu::select(['id', 'title','type', 'price_before', 'price', 'photo'])->orderBy('created_at', 'DESC');
             return DataTables::eloquent($items)
                 ->addColumn('photo', function ($item) {
                     $path = storage_path('/app/public/' . $item->photo);
@@ -56,11 +56,17 @@ class MenuController extends Controller
             'title' => 'Menu List',
             'pageID' => 'menu101',
             'data_route' => 'menu-builder.index',
-            'columns' => ['Title', 'Previous Price', 'Price', 'Photo', 'Actions'],
+            'columns' => ['Title', 'Type', 'Previous Price', 'Price', 'Photo', 'Actions'],
             'columns_for_datatable' => [
                 [
                     "data" => "title",
                     "name" => "title",
+                    "orderable" => "true",
+                    "sortable" => "true",
+                ],
+                [
+                    "data" => "type",
+                    "name" => "type",
                     "orderable" => "true",
                     "sortable" => "true",
                 ],
@@ -122,6 +128,22 @@ class MenuController extends Controller
                     'required' => true
                 ],
                 [
+                    'label' => 'Menu Type',
+                    'placeholder' => 'Select Menu Type',
+                    'icon' => 'bx bx-food-menu',
+                    'width' => '6',
+                    'name' => 'type',
+                    'type' => 'select',
+                    'required' => true,
+                    'select_type' => 'single',
+                    'options' => [
+                        ['id' => 'Breakfast', 'value' => 'Breakfast'],
+                        ['id' => 'Launch', 'value' => 'Launch'],
+                        ['id' => 'Dinner', 'value' => 'Dinner'],
+                        ['id' => 'Others', 'value' => 'Others']
+                    ]
+                ],
+                [
                     'label' => 'Previous Price(If you want to make offer)',
                     'placeholder' => '200',
                     'icon' => 'bx bx-purchase-tag',
@@ -163,6 +185,7 @@ class MenuController extends Controller
         try {
             $validated = $request->validate([
                 'title' => 'required|max:255|unique:menus',
+                'type' => 'required',
                 'price_before' => 'required|min:1',
                 'price' => 'required|min:1',
                 'photo' => 'required|image|mimes:jpeg,png,jpg|max:512',
@@ -188,6 +211,7 @@ class MenuController extends Controller
         $obj = Menu::select(
             [
                 'title',
+                'type',
                 'price_before',
                 'price',
                 'photo',
@@ -218,6 +242,22 @@ class MenuController extends Controller
                         'name' => 'title',
                         'type' => 'text',
                         'required' => true
+                    ],
+                    [
+                        'label' => 'Menu Type',
+                        'placeholder' => 'Select Menu Type',
+                        'icon' => 'bx bx-food-menu',
+                        'width' => '6',
+                        'name' => 'type',
+                        'type' => 'select',
+                        'required' => true,
+                        'select_type' => 'single',
+                        'options' => [
+                            ['id' => 'Breakfast', 'value' => 'Breakfast'],
+                            ['id' => 'Launch', 'value' => 'Launch'],
+                            ['id' => 'Dinner', 'value' => 'Dinner'],
+                            ['id' => 'Others', 'value' => 'Others']
+                        ]
                     ],
                     [
                         'label' => 'Previous Price(If you want to make offer)',
@@ -261,6 +301,7 @@ class MenuController extends Controller
 
             $validated = $request->validate([
                 'title' => 'required|max:255|unique:menus,title,' . $id,
+                'type' => 'required',
                 'price_before' => 'required|min:1',
                 'price' => 'required|min:1',
                 'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:512',
@@ -271,7 +312,7 @@ class MenuController extends Controller
 
             $obj = Menu::where('id', $id)->first();
 
-            if($request->file('photo')) {
+            if ($request->file('photo')) {
                 if ($obj->photo && file_exists(storage_path('app/public/' . $obj->photo))) {
                     unlink(storage_path('/app/public/' . $obj->photo));
 
@@ -303,5 +344,20 @@ class MenuController extends Controller
         } catch (Exception $exp) {
             return redirect()->route('menu-builder.index')->with('error', $exp->getMessage());
         }
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function getAllMenu(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $model = Menu::select(['id', 'title','type','price_before','price','photo']);
+        $data = $model->get();
+        return response()->json([
+            'status' => 'success',
+            'data' => $data
+        ], 200);
     }
 }

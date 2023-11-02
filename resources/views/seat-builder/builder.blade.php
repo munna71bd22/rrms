@@ -26,7 +26,7 @@
                 </select>
 
                 <select onchange="addTable(this)" id="tbl" class="btn btn-primary">
-                    <option selected disabled>+ &#9711; Table</option>
+                    <option value="0" selected disabled>+ &#9711; Table</option>
                     <option value="1">1 Seat Table</option>
                     <option value="2">2 Seats Table</option>
                     <option value="3">3 Seats Table</option>
@@ -40,14 +40,11 @@
                 <button class="btn btn-danger remove">Remove</button>
                 <button onclick="buildSeat()" class="btn btn-success remove">Save</button>
 
-                <button class="btn btn-danger customer-mode">Customer Mode</button>
-                <button class="btn btn-danger admin-mode">Admin Mode</button>
-
 
             </div>
         </div>
 
-        <canvas id="canvas" width="812" height="812"></canvas>
+        <canvas id="canvas" width="600" height="600"></canvas>
     </div>
 
 
@@ -105,15 +102,6 @@
 
 
         canvas = new fabric.Canvas('canvas')
-        /*
-        fabric.Image.fromURL("{{asset('assets/seat-builder/')}}", function(img) {
-            // add background image
-            canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
-                //scaleX: canvas.width / img.width,
-                scaleY: canvas.height / img.height/2.5
-            });
-        });
-        */
 
 
         document.querySelectorAll('.remove')[0].addEventListener('click', function () {
@@ -127,74 +115,9 @@
         })
 
 
-        document.querySelectorAll('.customer-mode')[0].addEventListener('click', function () {
-            canvas.getObjects().map(o => {
-                o.hasControls = false
-                o.lockMovementX = true
-                o.lockMovementY = true
-                if (o.type === 'chair' || o.type === 'bar' || o.type === 'wall') {
-                    o.selectable = false
-                }
-                o.borderColor = '#38A62E'
-                o.borderScaleFactor = 2.5
-            })
-            canvas.selection = false
-            canvas.hoverCursor = 'pointer'
-            canvas.discardActiveObject()
-            canvas.renderAll()
-            document.querySelectorAll('.admin-menu')[0].style.display = 'none'
-            document.querySelectorAll('.customer-menu')[0].style.display = 'block'
-        })
-
-        /*
-
-        document.querySelectorAll('.customer-mode')[0].addEventListener('click', function () {
-            canvas.getObjects().map(o => {
-                o.hasControls = false
-                o.lockMovementX = true
-                o.lockMovementY = true
-                if (o.type === 'chair' || o.type === 'bar' || o.type === 'wall') {
-                    o.selectable = false
-                }
-                o.borderColor = '#38A62E'
-                o.borderScaleFactor = 2.5
-            })
-            canvas.selection = false
-            canvas.hoverCursor = 'pointer'
-            canvas.discardActiveObject()
-            canvas.renderAll()
-            document.querySelectorAll('.admin-menu')[0].style.display = 'none'
-            document.querySelectorAll('.customer-menu')[0].style.display = 'block'
-        })
-
-        document.querySelectorAll('.admin-mode')[0].addEventListener('click', function () {
-            canvas.getObjects().map(o => {
-                o.hasControls = true
-                o.lockMovementX = false
-                o.lockMovementY = false
-                if (o.type === 'chair' || o.type === 'bar' || o.type === 'wall') {
-                    o.selectable = true
-                }
-                o.borderColor = 'rgba(102, 153, 255, 0.75)'
-                o.borderScaleFactor = 1
-            })
-            canvas.selection = true
-            canvas.hoverCursor = 'move'
-            canvas.discardActiveObject()
-            canvas.renderAll()
-            document.querySelectorAll('.admin-menu')[0].style.display = 'block'
-            document.querySelectorAll('.customer-menu')[0].style.display = 'none'
-        })
-
-        function addDefaultObjects() {
-        }
-
-        addDefaultObjects();
-
-         */
-
         function setFloorId(t) {
             buildData.floor_id = t.value;
+            buildData.items = [];
             getBuildData();
         }
 
@@ -204,7 +127,6 @@
             if (selectedFloor < 1) {
                 alert('please select floor first.Then try to save.')
             } else {
-                console.log(buildData)
                 $.ajax({
                     url: '{{route('seat-builder.build')}}',
                     type: 'POST',
@@ -242,29 +164,30 @@
 
 
         function addTable(t) {
-            let tblImgUrl = "../assets/seat-builder/tbl" + t.value + ".png";
+            let tblNo = t.value;
+            if (t.value != '0') {
+                let tblImgUrl = "../assets/seat-builder/tbl" + tblNo + ".png";
 
-            fabric.Image.fromURL(tblImgUrl, function (img) {
-                var oImg = img.set({left: 0, top: 0}).scale(.75);
-                let text = new fabric.Text("Table with " + t.value + ' Seat', {
-                    left: 10,
-                    top: 150,
-                    fontSize: 15,
-                    fill: 'black'
+                fabric.Image.fromURL(tblImgUrl, function (img) {
+                    let oImg = img.set({left: 0, top: 20}).scale(.5);
+
+                    let title = new fabric.Text(prompt("Please enter table name/code:", ""), {
+                        left: 10,
+                        top: 0,
+                        fontSize: 15,
+                        fill: 'black'
+                    });
+
+                    let group = new fabric.Group([oImg, title], {
+                        id: generateId(),
+                        title: title,
+                        tbl_no: tblNo
+                    })
+                    canvas.add(group);
                 });
-                let title = new fabric.Text(prompt("Please enter table name/code:", ""), {
-                    left: 10,
-                    top: 170,
-                    fontSize: 15,
-                    fill: 'black'
-                });
-                let group = new fabric.Group([oImg, text, title], {
-                    id: generateId(),
-                    title: title,
-                    tbl_no: t.value
-                })
-                let obj = canvas.add(group);
-            });
+
+                $('#tbl').val(0).trigger('change');
+            }
 
         }
 
@@ -273,20 +196,15 @@
             let tblImgUrl = "../assets/seat-builder/tbl" + item.tbl_no + ".png";
 
             fabric.Image.fromURL(tblImgUrl, function (img) {
-                var oImg = img.set({left: 0, top: 0}).scale(.75);
-                let text = new fabric.Text("Table with " + item.tbl_no + ' Seat', {
-                    left: 10,
-                    top: 150,
-                    fontSize: 15,
-                    fill: 'black'
-                });
+                let oImg = img.set({left: 0, top: 20}).scale(.5);
+
                 let title = new fabric.Text(item.title ?? '', {
                     left: 10,
-                    top: 170,
+                    top: 0,
                     fontSize: 15,
                     fill: 'black'
                 });
-                let group = new fabric.Group([oImg, text, title], {
+                let group = new fabric.Group([oImg,title], {
                     id: item.id,
                     title: title,
                     tbl_no: item.tbl_no,
@@ -296,7 +214,7 @@
                     scaleY: parseFloat(item.scaleY)
 
                 })
-                let obj = canvas.add(group);
+                canvas.add(group);
             });
 
         }
@@ -321,8 +239,18 @@
         })
 
         canvas.on('object:selected', function (e) {
-
         })
+
+        window.fabric.util.addListener(canvas.upperCanvasEl, 'dblclick', function (e, self) {
+            let x = prompt("Update table name/code:", "");
+            if (x != null) {
+                let obj = canvas.getActiveObject();
+                obj.title.set('text', x);
+                canvas.renderAll();
+                let e = {target: obj}
+                pushItemForStore(e)
+            }
+        });
 
         function pushItemForStore(e) {
             let item = {

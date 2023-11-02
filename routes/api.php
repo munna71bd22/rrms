@@ -17,3 +17,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::group(['prefix' => 'website'], function () {
+    Route::get('/menus', [App\Http\Controllers\MenuController::class, 'getAllMenu'])->name('menus');
+    Route::get('/floors', [App\Http\Controllers\SeatController::class, 'getAllFloor'])->name('floors');
+    Route::get('/tables', [App\Http\Controllers\SeatController::class, 'getBuildData'])->name('tables');
+    Route::post('/make-booking', [App\Http\Controllers\BookingController::class, 'store'])->name('make-booking');
+
+});

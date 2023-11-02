@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Menu extends Model
 {
     use HasFactory;
-    protected $fillable = ['title','price_before','price','photo'];
+    protected $fillable = ['title','type','price_before','price','photo'];
 }

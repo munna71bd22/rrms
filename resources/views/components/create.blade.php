@@ -21,7 +21,27 @@
                                 <i class="{{$field['icon']}}"></i>
                             </span>
 
-                                @if($field['type'] != 'textarea')
+                                @if($field['type'] == 'select')
+                                    <select  name="{{$field['name']}}"
+                                             {{$field['select_type']}}"
+                                             class="form-control @error($field['name']) is-invalid @enderror"
+                                             @if($field['required'])  required="{{$field['required']}}"@endif >
+                                           <option disabled selected value="">Select</option>
+                                        @foreach($field['options'] as $option)
+                                            <option value="{{$option['id']}}">{{$option['value']}}</option>
+                                        @endforeach
+                                    </select>
+                                @elseif($field['type'] == 'textarea')
+                                    <textarea
+                                        type="{{$field['type']}}"
+                                        name="{{$field['name']}}"
+                                        class="form-control @error($field['name']) is-invalid @enderror"
+                                        placeholder="{{$field['placeholder']}}"
+                                        aria-label="{{$field['label']}}"
+                                        @if($field['required'])  required="{{$field['required']}}"@endif
+                                    >{{old($field['name'])}}</textarea>
+
+                                @else($field['type'] != 'textarea')
                                     <input
                                         type="{{$field['type']}}"
                                         name="{{$field['name']}}"
@@ -36,16 +56,8 @@
                                         @endif
                                         value="{{ old($field['name'])}}"
                                     />
-                                @elseif($field['type'] == 'textarea')
-                                    <textarea
-                                        type="{{$field['type']}}"
-                                        name="{{$field['name']}}"
-                                        class="form-control @error($field['name']) is-invalid @enderror"
-                                        placeholder="{{$field['placeholder']}}"
-                                        aria-label="{{$field['label']}}"
-                                        @if($field['required'])  required="{{$field['required']}}"@endif
-                                    >{{old($field['name'])}}</textarea>
                                 @endif
+
                                 @error($field['name'])
                                 <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>

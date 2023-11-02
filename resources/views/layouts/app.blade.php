@@ -126,7 +126,7 @@
 <script src="{{asset('assets/js/dashboards-analytics.js')}}"></script>
 
 <!-- Place this tag in your head or just before your close body tag. -->
-<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script async defer src="{{asset('/assets/js/buttons.js')}}"></script>
 @stack('scripts')
 <script>
     $(document).ready(function () {
