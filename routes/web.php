@@ -40,6 +40,7 @@ Route::group(['prefix' => 'home', 'middleware' => 'auth'], function () {
     Route::resource('/menu-builder', App\Http\Controllers\MenuController::class);
     Route::resource('/customers', App\Http\Controllers\CustomerController::class);
     Route::resource('/bookings', App\Http\Controllers\BookingController::class);
+    Route::get('/bookings/status/update/{id}', [App\Http\Controllers\BookingController::class,'updateStatus'])->name('bookings.update-status');
     Route::resource('/configurations', App\Http\Controllers\ConfigurationController::class);
     Route::resource('/pages', App\Http\Controllers\PageController::class);
 

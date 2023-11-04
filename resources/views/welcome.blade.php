@@ -280,6 +280,11 @@
         </div>
         <!-- Menu End -->
 
+        <style>
+            .error{
+                color: #f72539;
+            }
+        </style>
 
         <!-- Reservation Start -->
         <div id="book-table" class="container-xxl py-5 px-0 wow fadeInUp" data-wow-delay="0.1s"
@@ -294,16 +299,19 @@
                         </h5>
                         <small style="color: orange;">Select floor first & then add your desired table by clicking on
                             table icon</small>
+
                     </div>
+
                     <div class="col-md-6 w-75 d-flex flex-column text-start ps-4">
-                        <div class="form-floating" data-target-input="nearest">
+                        <div class="form-floating2" data-target-input="nearest">
                             <select class="form-select" id="floor_id" name="floor_id">
                                 <option value="" disabled selected>
+                                    Select Floor
                                 </option>
                             </select>
-                            <label for="datetime">Floor</label>
                         </div>
                     </div>
+
                     <canvas id="canvas" width="600" height="600"></canvas>
                 </div>
                 <div class="col-md-6 bg-dark d-flex align-items-center">
@@ -311,23 +319,23 @@
                          style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInUp;">
                         <h5 class="section-title ff-secondary text-start text-primary fw-normal">Reservation</h5>
                         <h1 class="text-white mb-4">Book A Table Online</h1>
-                        <form>
+                        <form id="booking-form">
                             <div class="row g-3">
                                 <div class="col-md-12">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="name" placeholder="Your Name"
+                                    <label style="color: orange" for="name">Your Name</label>
+                                    <div class="form-floating2">
+                                        <input type="text" class="form-control" name="name" id="name" placeholder="Your Name"
 
                                                @if(Auth::user())
                                                    value="{{Auth::user()->name}}"
                                                readonly
                                             @endif >
-
-                                        <label for="name">Your Name</label>
                                     </div>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <div class="form-floating">
+                                    <label style="color: orange" for="name">Your Mobile</label>
+                                    <div class="form-floating2">
                                         <input type="text" class="form-control" id="customer_mobile"
                                                name="customer_mobile" placeholder="Mobile"
 
@@ -335,57 +343,53 @@
                                                    value="{{Auth::user()->mobile}}"
                                                readonly
                                             @endif >
-
-                                        <label for="name">Mobile</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="email" class="form-control" id="email" placeholder="Your Email"
+                                    <label style="color: orange" for="email">Your Email</label>
+                                    <div class="form-floating2">
+                                        <input type="email" class="form-control" name="email" id="email" placeholder="Your Email"
 
                                                @if(Auth::user())
                                                    value="{{Auth::user()->email}}"
                                                readonly
                                             @endif >
-
-                                        <label for="email">Your Email</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-floating date" id="date3" data-target-input="nearest">
-                                        <input type="text" class="form-control datetimepicker-input"
+                                    <label style="color: orange" for="datetime">Date &amp; Time</label>
+                                    <div class="form-floating2"  data-target-input="nearest">
+                                        <input min="{{date('Y-m-d h:i:s')}}" type="datetime-local" class="form-control"
                                                id="booking_date"
                                                name="booking_date"
-                                               placeholder="Date &amp; Time" data-target="#date3"
-                                               data-toggle="datetimepicker">
-                                        <label for="datetime">Date &amp; Time</label>
+                                               placeholder="Date &amp; Time">
                                     </div>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <div class="form-floating">
+                                    <label style="color: orange" for="select1">No Of Guest</label>
+                                    <div class="form-floating2">
                                         <input type="number" name="guest_qty" id="guest_qty" class="form-control">
-                                        <label for="select1">No Of Guest</label>
                                     </div>
                                 </div>
 
 
-                                <div class="col-md-12">
+                                <div class="col-md-6">
 
-                                    <label class="col-md-12" for="tbl_id" style="color: orange">
-                                        Table
-                                        <select id="tbl_id" name="tbl_id" multiple>
+                                    <label style="color: orange" for="select1">Table</label>
+                                    <div class="form-floating2">
+                                        <select id="tbl_id" name="tbl_id[]" multiple>
 
                                         </select>
-                                    </label>
+                                    </div>
 
                                 </div>
 
-                                <div class="col-md-12">
+                                <div class="col-md-6">
 
                                     <label class="col-md-12" for="menus" style="color: orange">
                                         Menu
-                                        <select id="menus" name="menus" multiple>
+                                        <select id="menus" name="menus[]" multiple>
 
                                         </select>
                                     </label>
@@ -394,16 +398,19 @@
 
 
                                 <div class="col-12">
-                                    <div class="form-floating">
+                                    <label style="color: orange" for="message">Special Request</label>
+                                    <div class="form-floating2">
                                         <textarea class="form-control" placeholder="Special Request"
                                                   id="remarks"
                                                   name="remarks"
                                                   style="height: 100px"></textarea>
-                                        <label for="message">Special Request</label>
                                     </div>
                                 </div>
                                 <div class="col-12">
-                                    <button onclick="makeBooking()" class="btn btn-primary w-100 py-3" type="button">Book Now</button>
+                                    <button  class="btn btn-primary w-100 py-3" type="submit">
+                                        Book Now
+                                    </button>
+
                                 </div>
                             </div>
                         </form>
@@ -414,6 +421,7 @@
 
 
         <!-- Reservation Start -->
+
 
 
         <!-- Footer Start -->
@@ -475,6 +483,8 @@
     </div>
 </div>
 
+
+
 <!-- JavaScript Libraries -->
 <script src="website/jquery-3.4.1.min.js.download"></script>
 <script src="website/bootstrap.bundle.min.js.download"></script>
@@ -492,6 +502,7 @@
 <script src="{{asset('assets/seat-builder/fabric.min.js')}}"></script>
 <link href="{{asset('assets/css/select2.min.css')}}" rel="stylesheet"/>
 <script src="{{asset('assets/js/select2.min.js')}}"></script>
+<script src="{{asset('assets/js/jquery.validate.min.js')}}"></script>
 <script>
 
     $('#floor_id').on('change', function () {
@@ -527,7 +538,7 @@
                 res.data.map(function (obj, key) {
                     let item = `<div class="col-lg-6">
                                     <div class="d-flex align-items-center">
-                                        <img class="flex-shrink-0 img-fluid rounded" src="/storage/${obj.photo}" alt=""  height="100px" style="height: 80px;">
+                                        <img class="flex-shrink-0 img-fluid rounded" src="{{asset('/storage')}}/${obj.photo}" alt=""  height="100px" style="height: 80px;">
                                         <div class="w-100 d-flex flex-column text-start ps-4">
                                             <h5 class="d-flex justify-content-between border-bottom pb-2">
                                                 <span>${obj.title}</span>
@@ -548,7 +559,7 @@
                     } else if (obj.type == 'Others') {
                         items4 += item;
                     }
-                    $('#menus').append(`<option value="${obj.id}">${obj.title}</option>`);
+                    $('#menus').append(`<option value="${obj.title}">${obj.title}</option>`);
                 })
                 items1 += `</div>`;
                 items2 += `</div>`;
@@ -591,7 +602,7 @@
 
 
     function setTable(item) {
-        let tblImgUrl = "../assets/seat-builder/tbl" + item.tbl_no + ".png";
+        let tblImgUrl = "{{asset('assets/seat-builder/tbl')}}" + item.tbl_no + ".png";
 
         fabric.Image.fromURL(tblImgUrl, function (img) {
             var oImg = img.set({left: 0, top: 20}).scale(.5);
@@ -645,34 +656,73 @@
         }
     })
 
-    function makeBooking() {
-        let tblIds = $('#tbl_id').val();
-        if (tblIds.length == 0) {
-            alert('please add table first.Then try to book.')
-        } else {
-            $.ajax({
-                url: '{{route('make-booking')}}',
-                type: 'POST',
-                headers: {'X-CSRF-TOKEN': '{{@csrf_token()}}'},
-                data: {
-                    tblIds: tblIds,
-                    name: $('#name').val(),
-                    email: $('#email').val(),
-                    customer_mobile: $('#customer_mobile').val(),
-                    booking_date: $('#booking_date').val(),
-                    guest_qty: $('#guest_qty').val(),
-                    menus: $('#menus').val(),
-                    remarks: $('#remarks')
-                },
-                success: function (res) {
-                    alert(res.message)
-                },
-                error: function (res) {
-                    console.log(res)
-                }
-            })
-        }
+    function makeBooking(form) {
+        $.ajax({
+            url: '{{route('make-booking')}}',
+            type: 'POST',
+            headers: {'X-CSRF-TOKEN': '{{@csrf_token()}}'},
+            data: $('#booking-form').serialize(),
+            success: function (res) {
+               alert(res.message)
+                window.location = '';
+            },
+            error: function (res,err) {
+                console.log(res)
+            }
+        })
     }
+
+
+    $(document).ready(function () {
+        $("#booking-form").submit(function (e){
+            e.preventDefault();
+        }).validate({
+            rules: {
+                name: {
+                    required: true,
+                    minlength: 2,
+                    maxlength: 255,
+                },
+                customer_mobile: {
+                    required: true,
+                    number: true,
+                    minlength: 5,
+                    maxlength: 15,
+                },
+                email: {
+                    required: true,
+                    email: true,
+                    maxlength: 255,
+                },
+                booking_date: {
+                    required: true,
+                    date: true,
+                    maxlength: 20,
+                },
+                guest_qty: {
+                    required: true,
+                    number: true,
+                    min: 1,
+                    max: 9999,
+                },
+                'tbl_id[]': {
+                    required: true,
+                },
+                remarks: {
+                    maxlength: 1406,
+                }
+
+            },
+            messages: {
+                name: {
+                    minlength: "Name should be at least 2 characters"
+                },
+            },
+            submitHandler: function (form) {
+                makeBooking(form);
+            }
+        });
+    });
 
 
 </script>

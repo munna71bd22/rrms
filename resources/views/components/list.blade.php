@@ -47,6 +47,9 @@
         @csrf
         {!! method_field('delete') !!}
     </form>
+    <form id="updateStatusForm" action="" method="GET">
+        <input type="hidden" id="status" name="status" value="pending">
+    </form>
     @push('scripts')
         <script src="{{asset('assets/js/jquery.dataTables.min.js')}}"></script>
         <script>
@@ -100,6 +103,21 @@
                 if(confirm("Are you sure want to delete this?")) {
                     $('#deleteForm').attr('action',url);
                     $('#deleteForm').submit();
+                }
+            }
+            function confirmDelete(url)
+            {
+                if(confirm("Are you sure want to delete this?")) {
+                    $('#deleteForm').attr('action',url);
+                    $('#deleteForm').submit();
+                }
+            }
+            function updateStatus(url,status)
+            {
+                if(confirm(`Are you sure want to update status as ${status}?`)) {
+                    $('#updateStatusForm').attr('action',url);
+                    $('#status').val(status);
+                    $('#updateStatusForm').submit();
                 }
             }
 

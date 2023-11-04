@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Table;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Yajra\DataTables\Facades\DataTables;
 
 class BookingController extends Controller
@@ -18,19 +21,28 @@ class BookingController extends Controller
         if ($request->ajax()) {
             $items = Booking::select(['*'])->orderBy('created_at', 'DESC');
             return DataTables::eloquent($items)
-                ->addColumn('photo', function ($item) {
-                    $path = "booking/" . $item->id . ".png";
-                    $imgSrc = file_exists($path) ? asset($path) : asset('assets/img/avatars/booking.png');
-                    return '<img width="30" height="30" src=' . $imgSrc . '>';
-                })
                 ->addColumn('actions', function ($item) {
                     return '<div class="btn-group" role="group" aria-label="First group">
-                              <a title="Edit" href="' . route('bookings.edit', $item->id) . '" type="button" class="btn btn-outline-info">
-                                <i class="tf-icons bx bx-edit"></i>
-                              </a>
 
                                <a title="Show" href="' . route('bookings.show', $item->id) . '" type="button" class="btn btn-outline-info">
                                 <i class="tf-icons bx bxs-notepad"></i>
+                              </a>
+                               <a
+                               title="Approve"
+                               name="' . route('bookings.update-status', $item->id) . '"
+                               onclick="updateStatus(this.name,`approved`)"
+                               type="button"
+                               class="btn btn-outline-success">
+                                <i class="tf-icons bx bx-check-circle"></i>
+                              </a>
+
+                               <a
+                               title="Cancel"
+                               name="' . route('bookings.update-status', $item->id) . '"
+                               onclick="updateStatus(this.name,`cancel`)"
+                               type="button"
+                               class="btn btn-outline-warning">
+                                <i class="tf-icons bx bx-window-close"></i>
                               </a>
 
                                <a
@@ -45,7 +57,23 @@ class BookingController extends Controller
 
                             </div>';
                 })
-                ->rawColumns(['photo', 'actions'])
+                /*
+                ->addColumn('tables',function ($item){
+                    $str = '';
+                    foreach ($item->tables()->get() as $tbl) {
+                        $str.= '<span class="badge bg-label-primary me-1">'.$tbl->title.'</span><br>';
+                    }
+                    return $str;
+                })
+                ->addColumn('menus',function ($item){
+                    $str = '';
+                    foreach ($item->menus()->get() as $tbl) {
+                        $str.= '<span class="badge bg-label-dark me-1">'.$tbl->title.'</span><br>';
+                    }
+                    return $str;
+                })
+                */
+                ->rawColumns(['actions'])
                 ->toJson();
         }
 
@@ -54,8 +82,14 @@ class BookingController extends Controller
             'title' => 'Booking List',
             'pageID' => 'booking101',
             'data_route' => 'bookings.index',
-            'columns' => ['Mobile', 'Start Time', 'End Time', 'Photo', 'Actions'],
+            'columns' => ['Name', 'Mobile', 'Email', 'Date', 'Status', 'Actions'],
             'columns_for_datatable' => [
+                [
+                    "data" => "name",
+                    "name" => "name",
+                    "orderable" => "true",
+                    "sortable" => "true",
+                ],
                 [
                     "data" => "customer_mobile",
                     "name" => "customer_mobile",
@@ -63,22 +97,23 @@ class BookingController extends Controller
                     "sortable" => "true",
                 ],
                 [
-                    "data" => "booking_start_time",
-                    "name" => "booking_start_time",
+                    "data" => "email",
+                    "name" => "email",
                     "orderable" => "true",
                     "sortable" => "true",
                 ],
                 [
-                    "data" => "booking_end_time",
-                    "name" => "booking_end_time",
+                    "data" => "booking_date",
+                    "name" => "booking_date",
                     "orderable" => "true",
                     "sortable" => "true",
                 ],
+
                 [
-                    "data" => "photo",
-                    "name" => "photo",
-                    "orderable" => "false",
-                    "sortable" => "false",
+                    "data" => "status",
+                    "name" => "status",
+                    "orderable" => "true",
+                    "sortable" => "true",
                 ],
                 [
                     "data" => "actions",
@@ -88,12 +123,14 @@ class BookingController extends Controller
                 ],
             ],
             'tools' => [
+                /*
                 [
                     'name' => 'Create',
                     'icon' => 'tf-icons bx bx-plus',
                     'class' => 'btn btn-icon btn-primary',
                     'url' => route('bookings.create')
                 ],
+                */
 
             ]
         ]);
@@ -156,22 +193,47 @@ class BookingController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): JsonResponse
     {
         try {
             $validated = $request->validate([
-                'title' => 'required|max:255|unique:bookings',
-                'price_before' => 'required|min:1',
-                'price' => 'required|min:1',
-                'photo' => 'nullable|image|photo'
+                'name' => 'required|max:255',
+                'customer_mobile' => 'required|max:255',
+                'email' => 'required|email',
+                'booking_date' => 'required|date',
+                'guest_qty' => 'required|min:1',
+                'tbl_id' => 'required|array',
+                'menus' => 'nullable|array',
+                'remarks' => 'nullable|max:1406',
             ]);
 
             $data = $request->except(['_token', '_method']);
 
+            $customer = User::where('email', $data['email'])->first();
+
+            if (!$customer) {
+                $customer = User::create([
+                    'name' => $data['name'],
+                    'mobile' => $data['customer_mobile'],
+                    'email' => $data['email'],
+                    'password' => bcrypt($data['email'])
+                ]);
+            }
+            $data['user_id'] = $customer->id;
+            $data['tbl_id'] = json_encode($data['tbl_id']);
+            $data['menus'] = json_encode($data['menus'] ?? []);
+
             Booking::create($data);
-            return redirect()->route('bookings.index')->with('success', 'New booking created successfully!');
+
+            return response()->json([
+                'type' => 'success',
+                'message' => '🎉Congratulations! Your booking request has been sent to us successfully! Our representative will contact with you immediately. Thank you very much.'
+            ], 200);
         } catch (Exception $exp) {
-            return redirect()->route('bookings.index')->with('error', $exp->getMessage());
+            return response()->json([
+                'type' => 'error',
+                'message' => $exp->getMessage()
+            ], 405);
         }
     }
 
@@ -182,13 +244,25 @@ class BookingController extends Controller
     {
         $obj = Booking::select(
             [
-                'title',
-                'price_before',
-                'price',
-                'photo',
-                'created_at'
+                'name',
+                'customer_mobile',
+                'email',
+                'booking_date',
+                'guest_qty',
+                'tbl_id',
+                'menus',
+                'remarks',
+                'status',
+                'confirmed_by',
+                'confirmed_date',
             ]
         )->find($id);
+        if ($obj) {
+            $obj->tbl_id = $obj->tables()->get();
+            $obj->menus = $obj->menus()->get();
+            $obj->confirmed_by = $obj->conformedBy->name ?? null;
+        }
+        //return $obj;
         return view('components.show', ['title' => 'Booking Details', 'obj' => $obj]);
     }
 
@@ -254,7 +328,7 @@ class BookingController extends Controller
     {
         try {
             $validated = $request->validate([
-                'title' => 'required|max:255|unique:bookings,title,'.$id,
+                'title' => 'required|max:255|unique:bookings,title,' . $id,
                 'price_before' => 'required|min:1',
                 'price' => 'required|min:1',
                 'photo' => 'nullable|image|photo'
@@ -277,6 +351,16 @@ class BookingController extends Controller
         try {
             Booking::where('id', $id)->delete();
             return redirect()->route('bookings.index')->with('success', 'Booking deleted successfully!');
+        } catch (Exception $exp) {
+            return redirect()->route('bookings.index')->with('error', $exp->getMessage());
+        }
+    }
+
+    public function updateStatus($id, Request $request)
+    {
+        try {
+            Booking::where('id', $id)->update(['status' => $request->status, 'confirmed_by' => auth()->user()->id, 'confirmed_date' => now()]);
+            return redirect()->route('bookings.index')->with('success', 'Booking status updated successfully!');
         } catch (Exception $exp) {
             return redirect()->route('bookings.index')->with('error', $exp->getMessage());
         }

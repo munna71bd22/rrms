@@ -14,10 +14,13 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('user_id');
-            $table->string('customer_mobile',15);
-            $table->timestamp('booking_start_time')->nullable();
-            $table->timestamp('booking_end_time')->nullable();
+            $table->string('name',100);
+            $table->string('email',100);
+            $table->string('customer_mobile',20);
+            $table->timestamp('booking_date')->nullable();
             $table->tinyInteger('guest_qty');
+            $table->json('tbl_id');
+            $table->json('menus');
             $table->string('status',10)->default('pending')->comment('pending,approved,cancel');
             $table->unsignedInteger('confirmed_by')->nullable();
             $table->timestamp('confirmed_date')->nullable();
