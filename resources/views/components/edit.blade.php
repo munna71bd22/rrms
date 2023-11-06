@@ -28,7 +28,7 @@
                                     @if($field['required'])  required="{{$field['required']}}"@endif >
                                     <option disabled selected value="">Select</option>
                                     @foreach($field['options'] as $option)
-                                        <option @if($obj->{$field['name']} == $option['id']) selected @endif value="{{$option['id']}}">{{$option['value']}}</option>
+                                        <option @if($obj->{$field['name']} == $option['value']) selected @endif value="{{$option['value']}}">{{$option['text']}}</option>
                                         @endforeach
                                         </select>
 

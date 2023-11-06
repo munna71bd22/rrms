@@ -43,15 +43,16 @@
 
             </div>
         </div>
+        <br>
 
-        <canvas id="canvas" width="600" height="600"></canvas>
+        <canvas style="border: 1px solid lightslategray" id="canvas" width="600" height="600"></canvas>
     </div>
 
 
     <!-- Modal -->
     <div class="modal fade" id="backDropModal" data-bs-backdrop="static" tabindex="-1">
         <div class="modal-dialog">
-            <form method="POST" action="{{route('seat-builder.store')}}" class="modal-content">
+            <form method="POST" action="{{route('floors.store-from-another')}}" class="modal-content">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="backDropModalTitle">New Floor</h5>

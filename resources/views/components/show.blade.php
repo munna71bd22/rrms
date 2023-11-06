@@ -12,7 +12,7 @@
                         <tr>
                             <th> {{$key}}:</th>
                             @if(in_array($key,['avatar','photo','picture']))
-                                <td><img height="100px;" src="/storage/{{ $value}}"></td>
+                                <td><img height="100px;" src="{{asset('storage')}}/{{$value}}"></td>
                             @elseif(in_array($key,['created_at','date','updated_at','booking_date','confirmed_date']))
                                 <td> {{ $value ? date('d M, Y h:i A',strtotime($value)) : 'N/A'}} </td>
                             @elseif(in_array($key,['tbl_id','menus']))

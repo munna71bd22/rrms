@@ -35,7 +35,7 @@
                 <thead>
                 <tr>
                     @foreach($columns as $col)
-                        <th>{{$col}}</th>
+                        <th style="width: 100%">{{$col}}</th>
                     @endforeach
                 </tr>
                 </thead>

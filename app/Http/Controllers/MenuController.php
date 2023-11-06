@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Menu;
+use App\Models\MenuType;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -136,12 +138,7 @@ class MenuController extends Controller
                     'type' => 'select',
                     'required' => true,
                     'select_type' => 'single',
-                    'options' => [
-                        ['id' => 'Breakfast', 'value' => 'Breakfast'],
-                        ['id' => 'Launch', 'value' => 'Launch'],
-                        ['id' => 'Dinner', 'value' => 'Dinner'],
-                        ['id' => 'Others', 'value' => 'Others']
-                    ]
+                    'options' => MenuType::select(['title as value','title as text'])->get()->toArray(),
                 ],
                 [
                     'label' => 'Previous Price(If you want to make offer)',
@@ -252,12 +249,7 @@ class MenuController extends Controller
                         'type' => 'select',
                         'required' => true,
                         'select_type' => 'single',
-                        'options' => [
-                            ['id' => 'Breakfast', 'value' => 'Breakfast'],
-                            ['id' => 'Launch', 'value' => 'Launch'],
-                            ['id' => 'Dinner', 'value' => 'Dinner'],
-                            ['id' => 'Others', 'value' => 'Others']
-                        ]
+                        'options' => MenuType::select(['title as value','title as text'])->get()->toArray(),
                     ],
                     [
                         'label' => 'Previous Price(If you want to make offer)',

@@ -341,7 +341,7 @@ class CustomerController extends Controller
     {
         try {
             $checkDependency = Booking::where('user_id', $id)->count('id');
-            if ($checkDependency == 1) {
+            if ($checkDependency > 1) {
                 return redirect()
                     ->route('customers.index')
                     ->with('error', 'Customer can not be deleted at this moment because he/she has reservation information!');

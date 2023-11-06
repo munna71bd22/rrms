@@ -38,6 +38,10 @@ Route::group(['prefix' => 'home', 'middleware' => 'auth'], function () {
     Route::post('/seat-builder/build', [App\Http\Controllers\SeatController::class , 'build'])->name('seat-builder.build');
     Route::get('/seat-builder/get/build-data', [App\Http\Controllers\SeatController::class , 'getBuildData'])->name('seat-builder.get-build-data');
     Route::resource('/menu-builder', App\Http\Controllers\MenuController::class);
+    Route::resource('/floors', App\Http\Controllers\FloorController::class);
+    Route::post('/floors/store/ajax', [App\Http\Controllers\FloorController::class,'storeFromAnother'])->name('floors.store-from-another');
+    Route::resource('/menu-types', App\Http\Controllers\MenuTypeController::class);
+    Route::post('/menu-types/store/ajax', [App\Http\Controllers\MenuTypeController::class,'storeFromAnother'])->name('menu-types.store-from-another');
     Route::resource('/customers', App\Http\Controllers\CustomerController::class);
     Route::resource('/bookings', App\Http\Controllers\BookingController::class);
     Route::get('/bookings/status/update/{id}', [App\Http\Controllers\BookingController::class,'updateStatus'])->name('bookings.update-status');
@@ -50,3 +54,8 @@ Route::group(['prefix' => 'home', 'middleware' => 'auth'], function () {
 });
 
 Route::get('/website/pages/{slug}', [App\Http\Controllers\PageController::class, 'getPageBySlug']);
+
+Route::get('storage-link',function (){
+   \Illuminate\Support\Facades\Artisan::call('storage:link');
+   return 'storage linked';
+});

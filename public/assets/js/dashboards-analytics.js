@@ -14,9 +14,9 @@
     let x = parseInt($('#total_pending').val());
     let y = parseInt($('#total_approved').val());
     let z = parseInt($('#total_cancel').val());
-    let xp = ((x / (x + y + z)) * 100) ;
-    let yp = ((y / (x + y + z)) * 100) ;
-    let zp = ((z / (x + y + z)) * 100) ;
+    let xp = parseInt(((x / (x + y + z)) * 100)) ;
+    let yp = parseInt(((y / (x + y + z)) * 100) ) ;
+    let zp = parseInt(((z / (x + y + z)) * 100)) ;
 
     // Order Statistics Chart
     // --------------------------------------------------------------------

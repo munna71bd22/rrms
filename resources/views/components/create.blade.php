@@ -28,7 +28,7 @@
                                              @if($field['required'])  required="{{$field['required']}}"@endif >
                                            <option disabled selected value="">Select</option>
                                         @foreach($field['options'] as $option)
-                                            <option value="{{$option['id']}}">{{$option['value']}}</option>
+                                            <option value="{{$option['value']}}">{{$option['text']}}</option>
                                         @endforeach
                                     </select>
                                 @elseif($field['type'] == 'textarea')

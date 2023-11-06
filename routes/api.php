@@ -19,6 +19,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::group(['prefix' => 'website'], function () {
+    Route::get('/menu-types', [App\Http\Controllers\MenuTypeController::class, 'getAllMenuType'])->name('menu-types');
     Route::get('/menus', [App\Http\Controllers\MenuController::class, 'getAllMenu'])->name('menus');
     Route::get('/floors', [App\Http\Controllers\SeatController::class, 'getAllFloor'])->name('floors');
     Route::get('/tables', [App\Http\Controllers\SeatController::class, 'getBuildData'])->name('tables');

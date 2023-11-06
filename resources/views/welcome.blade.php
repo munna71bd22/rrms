@@ -217,62 +217,9 @@
                 </div>
                 <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s"
                      style="visibility: visible; animation-delay: 0.1s; animation-name: fadeInUp;">
-                    <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
-                        <li class="nav-item">
-                            <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 active" data-bs-toggle="pill"
-                               href="https://themewagon.github.io/Jafran/index.html#tab-1">
-                                <i class="fa fa-coffee fa-2x text-primary"></i>
-                                <div class="ps-3">
-                                    <small class="text-body">Popular</small>
-                                    <h6 class="mt-n1 mb-0">Breakfast</h6>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="d-flex align-items-center text-start mx-3 pb-3" data-bs-toggle="pill"
-                               href="https://themewagon.github.io/Jafran/index.html#tab-2">
-                                <i class="fa fa-hamburger fa-2x text-primary"></i>
-                                <div class="ps-3">
-                                    <small class="text-body">Special</small>
-                                    <h6 class="mt-n1 mb-0">Launch</h6>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill"
-                               href="https://themewagon.github.io/Jafran/index.html#tab-3">
-                                <i class="fa fa-utensils fa-2x text-primary"></i>
-                                <div class="ps-3">
-                                    <small class="text-body">Lovely</small>
-                                    <h6 class="mt-n1 mb-0">Dinner</h6>
-                                </div>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill"
-                               href="https://themewagon.github.io/Jafran/index.html#tab-4">
-                                <i class="fa fa-utensils fa-2x text-primary"></i>
-                                <div class="ps-3">
-                                    <small class="text-body">Fast food</small>
-                                    <h6 class="mt-n1 mb-0">Others</h6>
-                                </div>
-                            </a>
-                        </li>
+                    <ul id="menu-types" class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
                     </ul>
                     <div class="tab-content">
-                        <div id="tab-1" class="tab-pane fade show p-0 active">
-
-                        </div>
-                        <div id="tab-2" class="tab-pane fade show p-0">
-
-                        </div>
-                        <div id="tab-3" class="tab-pane fade show p-0">
-
-                        </div>
-                        <div id="tab-4" class="tab-pane fade show p-0">
-
-                        </div>
 
                     </div>
                 </div>
@@ -311,8 +258,13 @@
                             </select>
                         </div>
                     </div>
+                    <br>
+                    <div class="col-md-10 d-flex flex-column text-start ps-4"
+                         style="overflow-x: scroll;margin-left: 5%;width: 80%; border: 1px solid slategray;">
 
-                    <canvas id="canvas" width="600" height="600"></canvas>
+                    <canvas style="border: 5px dotted transparent" width="600" height="600" id="canvas"></canvas>
+                        <br>
+                    </div>
                 </div>
                 <div class="col-md-6 bg-dark d-flex align-items-center">
                     <div class="p-5 wow fadeInUp" data-wow-delay="0.2s"
@@ -534,9 +486,27 @@
             url: '{{route('menus')}}',
             type: 'GET',
             success: function (res) {
-                let items1 = items2 = items3 = items4 = `<div class="row g-4">`;
                 res.data.map(function (obj, key) {
-                    let item = `<div class="col-lg-6">
+                    $('#menus').append(`<option value="${obj.title}">${obj.title}</option>`);
+                })
+
+            },
+            error: function (res) {
+                console.log(res)
+            }
+        })
+    }
+
+    function getAllMenuType() {
+        $.ajax({
+            url: '{{route('menu-types')}}',
+            type: 'GET',
+            success: function (res) {
+                res.data.map(function (menuType, k) {
+                    let item = ``;
+                menuType.menus.map(function (obj, key) {
+                    item+= `
+                                    <div class="col-lg-6">
                                     <div class="d-flex align-items-center">
                                         <img class="flex-shrink-0 img-fluid rounded" src="{{asset('/storage')}}/${obj.photo}" alt=""  height="100px" style="height: 80px;">
                                         <div class="w-100 d-flex flex-column text-start ps-4">
@@ -549,26 +519,27 @@
 
                                         </div>
                                     </div>
-                                </div>`;
-                    if (obj.type == 'Breakfast') {
-                        items1 += item;
-                    } else if (obj.type == 'Launch') {
-                        items2 += item;
-                    } else if (obj.type == 'Dinner') {
-                        items3 += item;
-                    } else if (obj.type == 'Others') {
-                        items4 += item;
-                    }
-                    $('#menus').append(`<option value="${obj.title}">${obj.title}</option>`);
+                                </div>
+                                `;
                 })
-                items1 += `</div>`;
-                items2 += `</div>`;
-                items3 += `</div>`;
-                items4 += `</div>`;
-                $('#tab-1').html(items1);
-                $('#tab-2').html(items2);
-                $('#tab-3').html(items3);
-                $('#tab-4').html(items4);
+                $('#menu-types').append(`<li  class="nav-item">
+                            <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 menu-type-item-${k}" data-bs-toggle="pill"
+                               href="#tab-${k}">
+                                <i class="${menuType.icon} fa-2x text-primary"></i>
+                                <div class="ps-3">
+                                    <small class="text-body">.</small>
+                                    <h6 class="mt-n1 mb-0">${menuType.title}</h6>
+                                </div>
+                            </a>
+                        </li>`)
+
+                    $('.tab-content').append(`<div id="tab-${k}" class="tab-pane fade show p-0"><div class="row g-4">${item}</div></div>`);
+
+                })
+
+                $('.menu-type-item-0').addClass('active')
+                $('#tab-0').addClass('active')
+
             },
             error: function (res) {
                 console.log(res)
@@ -591,6 +562,7 @@
         })
     }
 
+    getAllMenuType();
     getAllMenu();
     getAllFloor();
     getBuildData();
@@ -723,6 +695,7 @@
             }
         });
     });
+
 
 
 </script>

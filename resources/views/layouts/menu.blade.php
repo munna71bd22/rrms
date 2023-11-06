@@ -79,7 +79,14 @@
             </li>
 
             <!-- Layouts -->
-            <li class="menu-item {{ (request()->is('home/menu-builder')) ? 'active' : '' }}">
+            <li class="menu-item {{ (request()->is('home/menu-types') || request()->is('home/menu-types/*')) ? 'active' : '' }}">
+                <a href="{{route('menu-types.index')}}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-shape-polygon"></i>
+                    <div data-i18n="Layouts">Menu Types</div>
+                </a>
+            </li>
+
+            <li class="menu-item {{ (request()->is('home/menu-builder') || request()->is('home/menu-builder/*')) ? 'active' : '' }}">
                 <a href="{{route('menu-builder.index')}}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-food-menu"></i>
                     <div data-i18n="Layouts">Menu Builder</div>
@@ -87,13 +94,18 @@
             </li>
 
 
-            <li class="menu-item {{ (request()->is('home/seat-builder')) ? 'active open' : '' }}">
+            <li class="menu-item {{ (request()->is('home/seat-builder') || request()->is('home/floors') || request()->is('home/floors/*')) ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-layout"></i>
                     <div data-i18n="Layouts">Seat Builder</div>
                 </a>
 
                 <ul class="menu-sub">
+                    <li class="menu-item {{ (request()->is('home/floors') || request()->is('home/floors/*')) ? 'active' : '' }}">
+                        <a href="{{route('floors.index')}}" class="menu-link">
+                            <div data-i18n="Without menu">Floors</div>
+                        </a>
+                    </li>
                     <li class="menu-item {{ (request()->is('home/seat-builder')) ? 'active' : '' }}">
                         <a href="{{route('seat-builder.index')}}" class="menu-link">
                             <div data-i18n="Without menu">build</div>
@@ -108,7 +120,7 @@
                 <span class="menu-header-text">Bookings</span>
             </li>
 
-            <li class="menu-item {{ (request()->is('home/customers')) ? 'active' : '' }}">
+            <li class="menu-item {{ (request()->is('home/customers') || request()->is('home/customers/*')) ? 'active' : '' }}">
                 <a href="{{route('customers.index')}}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-user-pin"></i>
                     <div data-i18n="Account Settings">Customers</div>
@@ -116,7 +128,7 @@
 
             </li>
 
-            <li class="menu-item {{ (request()->is('home/bookings')) ? 'active' : '' }}">
+            <li class="menu-item {{ (request()->is('home/bookings') || request()->is('home/bookings/*')) ? 'active' : '' }}">
                 <a href="{{route('bookings.index')}}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-restaurant"></i>
                     <div data-i18n="Account Settings">Bookings</div>
